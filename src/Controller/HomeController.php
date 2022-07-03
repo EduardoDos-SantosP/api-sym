@@ -2,15 +2,22 @@
 
 namespace App\Controller;
 
+use App\Annotation\Routing\RouteParams;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/', 'home_')]
 class HomeController extends Controller
 {
-    #[Route('/index', 'index')]
-    public function index(): Response
+    public function index(ContainerBagInterface $b): Response
     {
-        return self::createResponse('Olá mundo!');
+        //return $this->redirect('/app/loadRoutes');
+        //(new AppController())->autoLoadRoutes($b->get('kernel.project_dir'));
+        return self::createResponse('Deu certo!');
+    }
+
+    public function about(): Response
+    {
+        return new Response();
     }
 }
