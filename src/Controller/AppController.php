@@ -21,19 +21,26 @@ use function Symfony\Component\String\b;
 #[Route('/app', 'app_')]
 class AppController extends Controller
 {
+    public readonly string $projectDir;
+
+    public function __construct(ContainerBagInterface $bag)
+    {
+        $this->projectDir = $bag->get('kernel.project_dir');
+    }
+
     public function index(string $route): Response
     {
-        return self::createResponse($route);
+        return $this->json($route);
     }
 
     #[Route('/loadRoutes', 'load_routes')]
     public function loadRoutes(ContainerBagInterface $containerBag): Response|null
     {
-        $this->autoLoadRoutes($containerBag->get('kernel.project_dir'));
-        return self::createResponse('Rotas geradas com sucesso!');
+        $this->autoLoadRoutes();
+        return $this->json('Rotas geradas com sucesso!');
     }
 
-    public function autoLoadRoutes(string $projectDir): void
+    public function autoLoadRoutes(): void
     {
         $routes = [];
         /** @var $controller string */
@@ -41,7 +48,7 @@ class AppController extends Controller
             foreach ($this->getControllerRoutes($controller) as $key => $route)
                 $routes[$key] = $route;
 
-        $routesPath = "$projectDir/config/routes.yaml";
+        $routesPath = $this->projectDir . '/config/routes.yaml';
         if (!file_exists($routesPath))
             throw new RuntimeException("O arquivo de rotas $routesPath não foi encontrado!");
 

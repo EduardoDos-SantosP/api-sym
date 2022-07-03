@@ -37,7 +37,7 @@ final class ReflectionHelper
             $class = new ReflectionClass($class);
         }
 
-        return empty($attributes = $class->getAttributes($attribute)) ? null : $attributes[0];
+        return !($attributes = $class->getAttributes($attribute)) ? null : $attributes[0];
     }
 
     /** Retorna um ReflectionAttribute de $class com nome de classe $attribute, ou null se não for encontrado */
@@ -60,7 +60,7 @@ final class ReflectionHelper
         else
             throw new RuntimeException("O método ou prorpiedade $methodOrProp não existe na classe!");
 
-        return empty($attributes = $reflection->getAttributes($attribute)) ? null : $attributes[0];
+        return !($attributes = $reflection->getAttributes($attribute)) ? null : $attributes[0];
     }
 
     /** Retorna um ReflectionAttribute de $methodOrProp com nome de classe $attribute, ou null se não for encontrado */
