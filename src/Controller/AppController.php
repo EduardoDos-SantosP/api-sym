@@ -8,6 +8,7 @@ use App\Helper\ReflectionHelper;
 use DirectoryIterator;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use RuntimeException;
@@ -28,13 +29,8 @@ class AppController extends Controller
         $this->projectDir = $bag->get('kernel.project_dir');
     }
 
-    public function index(string $route): Response
-    {
-        return $this->json($route);
-    }
-
     #[Route('/loadRoutes', 'load_routes')]
-    public function loadRoutes(ContainerBagInterface $containerBag): Response|null
+    public function loadRoutes(): Response|null
     {
         $this->autoLoadRoutes();
         return $this->json('Rotas geradas com sucesso!');
@@ -42,17 +38,24 @@ class AppController extends Controller
 
     public function autoLoadRoutes(): void
     {
+        $thisRoute = __CLASS__ . '::' . (new \ReflectionFunction($this->loadRoutes(...)))->name;
+
         $routes = [];
         /** @var $controller string */
         foreach ($this->getControllers() as $controller)
             foreach ($this->getControllerRoutes($controller) as $key => $route)
-                $routes[$key] = $route;
+                if ($route['controller'] !== $thisRoute)
+                    $routes[$key] = $route;
+                else if (isset($routes['when@dev']))
+                    $routes['when@dev'][$key] = $route;
+                else
+                    $routes['when@dev'] = [$key => $route];
 
         $routesPath = $this->projectDir . '/config/routes.yaml';
         if (!file_exists($routesPath))
             throw new RuntimeException("O arquivo de rotas $routesPath não foi encontrado!");
 
-        $yamlStr = Yaml::dump($routes);
+        $yamlStr = Yaml::dump($routes, PHP_INT_MAX);
         file_put_contents($routesPath, $yamlStr);
     }
 
@@ -95,9 +98,12 @@ class AppController extends Controller
         $yamlMap = new Collection();
 
         foreach ($actions as $action) {
-            $returntype = $action->getReturnType();
-            if (!is_a($returntype, ReflectionNamedType::class) || $returntype->getName() !== Response::class)
-                continue;
+            //Verifica se não retorna um Response
+            if (
+                !class_exists($className = $action->getReturnType()?->getName()) ||
+                !in_array(Response::class, class_parents($className)) &&
+                $className !== Response::class
+            ) continue;
 
             $attributes = collect($action->getAttributes());
 

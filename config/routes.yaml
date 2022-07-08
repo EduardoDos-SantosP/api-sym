@@ -1,9 +1,13 @@
-app_index:
-    path: /app/index
-    controller: 'App\Controller\AppController::index'
-app_loadroutes:
-    path: /app/loadroutes
-    controller: 'App\Controller\AppController::loadRoutes'
+when@dev:
+    app_loadroutes:
+        path: /app/loadroutes
+        controller: 'App\Controller\AppController::loadRoutes'
+contabil_index:
+    path: /contabil/index
+    controller: 'App\Controller\ContabilController::index'
+contabil_newent:
+    path: /contabil/newent
+    controller: 'App\Controller\ContabilController::newEnt'
 home_index:
     path: /home/index
     controller: 'App\Controller\HomeController::index'

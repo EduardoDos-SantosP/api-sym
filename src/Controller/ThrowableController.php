@@ -3,9 +3,8 @@
 namespace App\Controller;
 
 use App\Annotation\Routing\NotRouted;
-use ReflectionClass;
-use ReflectionMethod;
 use RuntimeException;
+use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,20 +26,16 @@ class ThrowableController extends Controller
                 return $this->redirect($newRoute);
         }
 
-        return $this->json($this->uncapsuleThrowable($e));
+        if ($request->headers->get('sec-fetch-mode') !== 'navigate')
+            return $this->json([get_class($e) => $this->uncapsuleObj($e)]);
+
+        dump($e);
+
+        return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
     }
 
     public function __invoke(Request $request): Response
     {
         return $this->index($request);
-    }
-
-    private function uncapsuleThrowable(Throwable $e): array
-    {
-        return collect((new ReflectionClass($e))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->mapWithKeys(fn(ReflectionMethod $m) => ($n = b($m->name))
-                ->equalsTo($n = $n->trimPrefix('get'))
-                ? [0 => 0] : [(string)$n->camel() => $e->{"get$n"}()]
-            )->filter()->all();
     }
 }
