@@ -6,20 +6,21 @@ use App\Annotation\Routing\NotRouted;
 use App\Annotation\Routing\RouteParams;
 use App\Helper\ReflectionHelper;
 use DirectoryIterator;
+use Doctrine\Persistence\ManagerRegistry;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionFunction;
 use ReflectionMethod;
-use ReflectionNamedType;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Yaml;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 use function Symfony\Component\String\b;
 
-#[Route('/app', 'app_')]
 class AppController extends Controller
 {
     public readonly string $projectDir;
@@ -29,8 +30,7 @@ class AppController extends Controller
         $this->projectDir = $bag->get('kernel.project_dir');
     }
 
-    #[Route('/loadRoutes', 'load_routes')]
-    public function loadRoutes(): Response|null
+    public function loadRoutes(ManagerRegistry $bag): Response|null
     {
         $this->autoLoadRoutes();
         return $this->json('Rotas geradas com sucesso!');
@@ -38,7 +38,7 @@ class AppController extends Controller
 
     public function autoLoadRoutes(): void
     {
-        $thisRoute = __CLASS__ . '::' . (new \ReflectionFunction($this->loadRoutes(...)))->name;
+        $thisRoute = __CLASS__ . '::' . (new ReflectionFunction($this->loadRoutes(...)))->name;
 
         $routes = [];
         /** @var $controller string */
@@ -85,18 +85,24 @@ class AppController extends Controller
 
     private function getControllerRoutes(string $controller): array
     {
+        $setRootRoute = $controller === self::class;
+
+        $getPublicMethods = fn(string $c) => (new ReflectionClass($c))->getMethods(ReflectionMethod::IS_PUBLIC);
         $actions = array_filter(
-            ReflectionHelper::publicMethodsOf($controller),
-            fn(ReflectionMethod $m) => !in_array($m, ReflectionHelper::publicMethodsOf(AbstractController::class))
+            $getPublicMethods($controller),
+            fn(ReflectionMethod $m) => !in_array($m, $getPublicMethods(Controller::class))
         );
 
         $controller = b($controller)->beforeLast('Controller');
 
-        $normalizeName = fn(string $name): string => b($name)->afterLast('\\')->lower();
-        $nameRoute = fn(string $action) => $normalizeName($controller . '_' . $action);
+        $normalizeRoute = fn(string $name): string => b($name)->afterLast('\\')->lower();
+        $nameRoute = fn(string $action) => $normalizeRoute($controller . '_' . $action);
 
-        $yamlMap = new Collection();
-
+        $loadRoutesMethodName = (new ReflectionFunction($this->loadRoutes(...)))->name;
+        $rootNameRoute = $nameRoute($loadRoutesMethodName);
+        $rootPath =
+            '/' . $normalizeRoute("$controller/$loadRoutesMethodName");
+        $yamlMap = [];
         foreach ($actions as $action) {
             //Verifica se não retorna um Response
             if (
@@ -117,13 +123,15 @@ class AppController extends Controller
             $params = $getAttr(RouteParams::class)?->newInstance();
 
             $yamlMap[$nameRoute($action = $action->name)] = [
-                'path' => '/' . $normalizeName("$controller/$action") . $params?->toUri(),
+                'path' => '/' . $normalizeRoute("$controller/$action") . $params?->toUri(),
                 'controller' => $controller . "Controller::$action",
                 ...collect(['requirements', 'defaults'])
                     ->mapWithKeys(fn($p) => [$p => $params?->$p])->filter()->all()
             ];
         }
+        if ($setRootRoute)
+            $yamlMap[$rootNameRoute]['path'] = ($path = $yamlMap[$rootNameRoute]['path']) === $rootPath ? '/' : $path;
 
-        return $yamlMap->all();
+        return $yamlMap;
     }
 }

@@ -1,6 +1,6 @@
 when@dev:
     app_loadroutes:
-        path: /app/loadroutes
+        path: /
         controller: 'App\Controller\AppController::loadRoutes'
 contabil_index:
     path: /contabil/index
