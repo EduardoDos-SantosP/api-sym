@@ -2,18 +2,11 @@
 
 namespace App\Repository;
 
-use App\Entity\Contabil;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-
-class ContabilRepository extends ServiceEntityRepository
+class ContabilRepository extends Repository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Contabil::class);
-    }
 
-    public function add(Contabil $entity, bool $flush = false): void
+
+    /*public function add(Contabil $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -29,8 +22,7 @@ class ContabilRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
-    }
-
+    }*/
 //    /**
 //     * @return Contabil[] Returns an array of Contabil objects
 //     */
@@ -45,7 +37,7 @@ class ContabilRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-
+//
 //    public function findOneBySomeField($value): ?Contabil
 //    {
 //        return $this->createQueryBuilder('c')

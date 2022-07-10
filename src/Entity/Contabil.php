@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use App\Repository\ContabilRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 
-#[Entity]
+#[Entity(ContabilRepository::class)]
 class Contabil extends Model
 {
     #[Column(type: 'string', length: 127)]
@@ -20,11 +21,6 @@ class Contabil extends Model
 
     #[Column(type: 'datetime')]
     private DateTimeInterface $data;
-
-    public function getId(): ?int
-    {
-        return $this->id ?? null;
-    }
 
     public function getNome(): ?string
     {

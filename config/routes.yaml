@@ -5,6 +5,9 @@ when@dev:
 contabil_index:
     path: /contabil/index
     controller: 'App\Controller\ContabilController::index'
+contabil_all:
+    path: /contabil/all
+    controller: 'App\Controller\ContabilController::all'
 contabil_newent:
     path: /contabil/newent
     controller: 'App\Controller\ContabilController::newEnt'

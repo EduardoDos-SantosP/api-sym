@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Contabil;
-use App\Repository\ContabilRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContabilController extends Controller
 {
@@ -15,15 +15,14 @@ class ContabilController extends Controller
         return $this->json($conta);
     }
 
-    public function newEnt(ContabilRepository $repository): JsonResponse
+    public function all(): JsonResponse
     {
-        $c = new Contabil();
-        $c->setNome('Segunda inserção');
-        $c->setDescricao('Segunda inserção');
-        $c->setData(new \DateTime());
-        $c->setValor(2);
-        $repository->add($c);
+        return $this->json(self::getFacade()->all());
+    }
 
-        return $this->json('Sucesso!');
+    public function newEnt(): Response
+    {
+        $this->getFacade();
+        return $this->redirect('/contabil/all');
     }
 }
