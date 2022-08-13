@@ -19,7 +19,7 @@ trait BaseEnumTrait
         $sesitiveFunction =
             fn(string $case) => ($sesitive
                 ? fn($n) => $n
-                : 'ststrtolower')($case);
+                : 'strtolower')($case);
         return collect(static::cases())
             ->map(fn(UnitEnum $case) => $sesitiveFunction($case->name))
             ->contains($sesitiveFunction($caseName));
