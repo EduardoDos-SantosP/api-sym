@@ -3,12 +3,11 @@
 namespace App\Controller;
 
 use App\EntityServiceTrait;
+use App\Enum\EnumServiceType;
 use App\Facade\EntityFacade;
-use App\Facade\IFacade;
 use App\Helper\Singleton;
 use App\IEntityService;
 use Doctrine\Persistence\ManagerRegistry;
-use Illuminate\Contracts\Container\Container;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +36,7 @@ abstract class Controller extends AbstractController implements IEntityService
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Singleton::getInstance(
             'controller_facade',
-            fn() => self::findByEntity(self::getModelName(), 'facade', self::$manager)
+            fn() => self::findByEntity(self::getModelName(), EnumServiceType::Facade, self::$manager)
         );
     }
 

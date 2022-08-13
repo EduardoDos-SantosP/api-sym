@@ -2,8 +2,8 @@
 
 namespace App\Facade;
 
-use App\Entity\Model;
 use App\EntityServiceTrait;
+use App\Enum\EnumServiceType;
 use App\Helper\Singleton;
 use App\IEntityService;
 use App\Repository\Repository;
@@ -29,17 +29,17 @@ abstract class EntityFacade implements IEntityService, IFacade
         return $service;
     }
 
+    public function all(): array
+    {
+        return self::getRepository()->all();
+    }
+
     protected static function getRepository(): Repository
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Singleton::getInstance(
             'facade_repository',
-            fn() => self::findByEntity(self::getModelName(), 'repository', self::$manager)
+            fn() => self::findByEntity(self::getModelName(), EnumServiceType::Repositoy, self::$manager)
         );
-    }
-
-    public function all(): array
-    {
-        return self::getRepository()->all();
     }
 }

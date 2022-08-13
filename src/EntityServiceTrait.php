@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enum\EnumServiceType;
 use OutOfBoundsException;
 use ReflectionClass;
 use RuntimeException;
@@ -36,25 +37,30 @@ trait EntityServiceTrait
         if (count($explodedNamespace) <= 2)
             throw new RuntimeException("O serviço $class deve estar em um pasta adequada!");
 
-        return self::findByEntity($entityName, $explodedNamespace[1], ...$arguments);
+        if (!($serviceType = $explodedNamespace[1]))
+            throw new RuntimeException(
+                sprintf("O caso '%s' não existe no enumerador %s!", $serviceType, EnumServiceType::class)
+            );
+
+        return self::findByEntity($entityName, EnumServiceType::getByName($serviceType), ...$arguments);
     }
 
     public static function findByEntity(
-        string  $entityName,
-        string  $serviceType,
-        mixed   ...$arguments
+        string          $entityName,
+        EnumServiceType $serviceType,
+        mixed           ...$arguments
     ): IEntityService
     {
         if (!class_exists($entityName))
             throw new RuntimeException("A entidade $entityName não existe!");
 
-        $serviceType = b($serviceType)->lower()->title(true)->toString();
+        $serviceType = b($serviceType->name)->lower()->title(true)->toString();
 
         $explodedNamespace = explode('\\', $entityName);
         $explodedNamespace[1] = $serviceType;
         if (!class_exists($class = implode('\\', $explodedNamespace) . $serviceType))
             throw new RuntimeException(
-                "Não foi possível encontrar o serviço $class com base no serviço $entityName!"
+                "Não foi possível encontrar o serviço '$class' com base no serviço $entityName!"
             );
 
         if (!(new ReflectionClass($class))->implementsInterface($i = IEntityService::class))

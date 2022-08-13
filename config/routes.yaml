@@ -8,9 +8,9 @@ contabil_index:
 contabil_all:
     path: /contabil/all
     controller: 'App\Controller\ContabilController::all'
-contabil_newent:
-    path: /contabil/newent
-    controller: 'App\Controller\ContabilController::newEnt'
+contabil_new:
+    path: /contabil/new
+    controller: 'App\Controller\ContabilController::new'
 home_index:
     path: /home/index
     controller: 'App\Controller\HomeController::index'

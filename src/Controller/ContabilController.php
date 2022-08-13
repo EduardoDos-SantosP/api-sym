@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contabil;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ContabilController extends Controller
@@ -20,9 +21,9 @@ class ContabilController extends Controller
         return $this->json(self::getFacade()->all());
     }
 
-    public function newEnt(): Response
+    public function new(Request $request): Response
     {
-        $this->getFacade();
-        return $this->redirect('/contabil/all');
+        $content = $request->getContent();
+        return $this->json($content);
     }
 }
