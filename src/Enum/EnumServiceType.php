@@ -10,5 +10,3 @@ enum EnumServiceType implements IEnum
     case Facade;
     case Repositoy;
 }
-
-dd(EnumServiceType::caseExists('Controller'));
