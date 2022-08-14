@@ -8,5 +8,5 @@ enum EnumServiceType implements IEnum
 
     case Controller;
     case Facade;
-    case Repositoy;
+    case Repository;
 }

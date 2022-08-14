@@ -3,6 +3,7 @@
 namespace App\Annotation\Routing;
 
 use Attribute;
+use RuntimeException;
 
 #[Attribute]
 class RouteParams
@@ -13,6 +14,10 @@ class RouteParams
         public readonly array $defaults = []
     )
     {
+        if (count($this->requirements) + count($this->defaults))
+            throw new RuntimeException(
+                'Os atributos $requirements e $defaults não tem utilidade implementada!'
+            );
     }
 
     public function toUri(): string

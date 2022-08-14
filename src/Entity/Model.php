@@ -9,6 +9,8 @@ use JsonSerializable;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+use RuntimeException;
+use Throwable;
 use function Symfony\Component\String\b;
 
 abstract class Model implements JsonSerializable
@@ -17,6 +19,30 @@ abstract class Model implements JsonSerializable
     #[GeneratedValue]
     #[Column(type: 'integer')]
     protected int $id = 0;
+
+    public function __construct(array $map = null)
+    {
+        if (!$map) return;
+
+        foreach ($map as $prop => $value) {
+            if (!method_exists($this, $setter = 'set' . ucfirst($prop)))
+                throw new RuntimeException(
+                    "O setter de '$prop' não foi encontrado na classe " . static::class . '!'
+                );
+
+            if (!(new ReflectionMethod($this, $setter))->getNumberOfRequiredParameters())
+                throw new RuntimeException("O setter $setter é inválido pois não recebe argumentos!");
+
+            try {
+                $this->{$setter}($value);
+            } catch (Throwable $e) {
+                throw new RuntimeException(
+                    message: "Não foi possível atribuir valor a propriedade $prop!",
+                    previous: $e
+                );
+            }
+        }
+    }
 
     public function getId(): ?int
     {
@@ -40,7 +66,7 @@ abstract class Model implements JsonSerializable
     {
         return
             //É prefixado por 'get'
-            ($name = b($methodName)->trimPrefix('get'))->equalsTo($name) &&
+            !($name = b($methodName)->trimPrefix('get'))->equalsTo($methodName) &&
             //Getter tem tipo de retorno
             ($mType = (new ReflectionMethod($this, $methodName))->getReturnType()) &&
             //Tem propriedade respectiva ao getter
@@ -48,6 +74,6 @@ abstract class Model implements JsonSerializable
             //Propriedade tem tipo de retorno
             ($pType = (new ReflectionProperty($this, $prop))->getType()) /*&&
             //Os tipos batem
-            $mType->getName() === $pType->getName()*/;
+            $mType->getName() === $pType->getName()*/ ;
     }
 }

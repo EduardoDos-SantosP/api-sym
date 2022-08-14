@@ -9,6 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Illuminate\Support\Collection;
 use function Symfony\Component\String\b;
 
 abstract class Repository extends ServiceEntityRepository implements IRepository, IEntityService
@@ -24,26 +25,17 @@ abstract class Repository extends ServiceEntityRepository implements IRepository
         $this->em = $this->getEntityManager();
     }
 
-    public function all(): array
+    private function getEntityFullName(): string
     {
-        return $this->executeQuery($this->createQueryBuilder('c'));
+        return b(static::class)
+            ->replace('Repository', 'Entity')
+            ->trimSuffix('Entity')
+            ->toString();
     }
 
-    public function byId(int $id): Model
+    public function all(): Collection
     {
-        return $this->find($id);
-    }
-
-    public function store(Model $entity): void
-    {
-        $this->em->persist($entity);
-        $this->em->flush($entity);
-    }
-
-    public function delete(Model $entity): void
-    {
-        $this->em->remove($entity);
-        $this->em->flush($entity);
+        return collect($this->executeQuery($this->createQueryBuilder('c')));
     }
 
     protected function executeQuery(QueryBuilder $queryBuilder): mixed
@@ -51,11 +43,20 @@ abstract class Repository extends ServiceEntityRepository implements IRepository
         return $queryBuilder->getQuery()->execute();
     }
 
-    private function getEntityFullName(): string
+    public function byId(int $id): ?Model
     {
-        return b(static::class)
-            ->replace('Repository', 'Entity')
-            ->trimSuffix('Entity')
-            ->toString();
+        return $this->find($id);
+    }
+
+    public function store(Model $model): void
+    {
+        $this->em->persist($model);
+        $this->em->flush($model);
+    }
+
+    public function delete(Model $model): void
+    {
+        $this->em->remove($model);
+        $this->em->flush($model);
     }
 }

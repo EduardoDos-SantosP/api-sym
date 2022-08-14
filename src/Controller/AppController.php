@@ -7,7 +7,6 @@ use App\Annotation\Routing\RouteParams;
 use App\Helper\ReflectionHelper;
 use DirectoryIterator;
 use Doctrine\Persistence\ManagerRegistry;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -18,15 +17,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 use function Symfony\Component\String\b;
 
 class AppController extends Controller
 {
     public readonly string $projectDir;
 
-    public function __construct(ContainerBagInterface $bag)
+    public function __construct(ManagerRegistry $manager, ContainerBagInterface $bag)
     {
+        parent::__construct($manager);
         $this->projectDir = $bag->get('kernel.project_dir');
     }
 
@@ -51,12 +50,9 @@ class AppController extends Controller
                 else
                     $routes['when@dev'] = [$key => $route];
 
-        $routesPath = $this->projectDir . '/config/routes.yaml';
-        if (!file_exists($routesPath))
-            throw new RuntimeException("O arquivo de rotas $routesPath não foi encontrado!");
 
         $yamlStr = Yaml::dump($routes, PHP_INT_MAX);
-        file_put_contents($routesPath, $yamlStr);
+        file_put_contents($this->getProjectDir(), $yamlStr);
     }
 
     public function getControllers(): Collection
@@ -87,7 +83,9 @@ class AppController extends Controller
     {
         $setRootRoute = $controller === self::class;
 
-        $getPublicMethods = fn(string $c) => (new ReflectionClass($c))->getMethods(ReflectionMethod::IS_PUBLIC);
+        $getPublicMethods =
+            fn(string $contollerName) => (new ReflectionClass($contollerName))
+                ->getMethods(ReflectionMethod::IS_PUBLIC);
         $actions = array_filter(
             $getPublicMethods($controller),
             fn(ReflectionMethod $m) => !in_array($m, $getPublicMethods(Controller::class))
@@ -100,19 +98,20 @@ class AppController extends Controller
 
         $loadRoutesMethodName = (new ReflectionFunction($this->loadRoutes(...)))->name;
         $rootNameRoute = $nameRoute($loadRoutesMethodName);
-        $rootPath =
-            '/' . $normalizeRoute("$controller/$loadRoutesMethodName");
+        $rootPath = '/' . $normalizeRoute("$controller/$loadRoutesMethodName");
+
         $yamlMap = [];
         foreach ($actions as $action) {
             //Verifica se não retorna um Response
             if (
                 !class_exists($className = $action->getReturnType()?->getName()) ||
                 !in_array(Response::class, class_parents($className)) &&
-                $className !== Response::class
+                $className !== Response::class//TODO: verificar a necessidade dessa linha
             ) continue;
 
             $attributes = collect($action->getAttributes());
 
+            //TODO: Tornar essa função global
             $getAttr = fn(string $class): ?ReflectionAttribute => $attributes->first(
                 fn(ReflectionAttribute $a) => $a->getName() === $class
             );
@@ -133,5 +132,13 @@ class AppController extends Controller
             $yamlMap[$rootNameRoute]['path'] = ($path = $yamlMap[$rootNameRoute]['path']) === $rootPath ? '/' : $path;
 
         return $yamlMap;
+    }
+
+    public function getProjectDir(): string
+    {
+        $routesPath = ($this->projectDir ?? null) . '/config/routes.yaml';
+        if (!file_exists($routesPath))
+            throw new RuntimeException("O arquivo de rotas $routesPath não foi encontrado!");
+        return $routesPath;
     }
 }

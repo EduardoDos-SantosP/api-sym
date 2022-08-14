@@ -17,3 +17,12 @@ home_index:
 home_about:
     path: /home/about
     controller: 'App\Controller\HomeController::about'
+usuario_all:
+    path: /usuario/all
+    controller: 'App\Controller\UsuarioController::all'
+usuario_byid:
+    path: '/usuario/byid/{id}'
+    controller: 'App\Controller\UsuarioController::byId'
+usuario_new:
+    path: '/usuario/new/{nome}/{login}/{senha}'
+    controller: 'App\Controller\UsuarioController::new'

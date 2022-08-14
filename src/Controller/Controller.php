@@ -13,6 +13,7 @@ use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Serializer;
 use function Symfony\Component\String\b;
 
 abstract class Controller extends AbstractController implements IEntityService
@@ -63,5 +64,11 @@ abstract class Controller extends AbstractController implements IEntityService
                 )->filter()->all(),
             default => $o
         };
+    }
+
+    protected function deserialize(string $json, string $class): mixed
+    {
+        $serializer = new Serializer();
+        return $serializer->deserialize($json, $class, 'json');
     }
 }
