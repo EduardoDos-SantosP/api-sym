@@ -13,7 +13,7 @@ use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 use function Symfony\Component\String\b;
 
 abstract class Controller extends AbstractController implements IEntityService
@@ -26,10 +26,20 @@ abstract class Controller extends AbstractController implements IEntityService
     private static ?EntityFacade $facade = null;
 
     private static ManagerRegistry $manager;
+    private static SerializerInterface $serializer;
 
-    public function __construct(ManagerRegistry $manager)
+    public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
     {
         self::$manager = $manager;
+        self::$serializer = $serializer;
+    }
+
+    /**
+     * @return ManagerRegistry
+     */
+    public static function getManager(): ManagerRegistry
+    {
+        return self::$manager;
     }
 
     protected static function getFacade(): EntityFacade
@@ -66,9 +76,11 @@ abstract class Controller extends AbstractController implements IEntityService
         };
     }
 
-    protected function deserialize(string $json, string $class): mixed
+    protected function deserialize(string $json, ?string $class): mixed
     {
-        $serializer = new Serializer();
-        return $serializer->deserialize($json, $class, 'json');
+        //TODO: implementar esse método corretamente baseado em injeção de dependência
+        return $class
+            ? self::$serializer->deserialize($json, $class, 'json')
+            : json_decode($json);
     }
 }

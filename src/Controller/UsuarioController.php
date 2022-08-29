@@ -7,6 +7,7 @@ use App\Contract\ISearcherController;
 use App\Entity\Usuario;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UsuarioController extends Controller implements ISearcherController
 {
@@ -21,11 +22,11 @@ class UsuarioController extends Controller implements ISearcherController
         return $this->json(self::getFacade()->byId($id));
     }
 
-    #[RouteParams(['nome', 'login', 'senha'])]
-    public function new(Request $request): JsonResponse
+    public function new(Request $request, SerializerInterface $serializer): JsonResponse
     {
-        $u = $this->deserialize($request->getContent(), Usuario::class);
-        //self::getFacade()->store($u);
+        /** @var Usuario $u */
+        $u = $serializer->deserialize($request->getContent(), Usuario::class, 'json');
+        self::getFacade()->store($u);
         return $this->json($u);
     }
 }

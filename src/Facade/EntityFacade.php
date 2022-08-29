@@ -17,12 +17,17 @@ abstract class EntityFacade implements IEntityService, IFacade, ISearcher, IStor
 {
     use EntityServiceTrait;
 
-    private static ManagerRegistry $manager;
+    protected static ManagerRegistry $manager;
     private static ?Repository $repository = null;
 
     public function __construct(ManagerRegistry $manager)
     {
         self::$manager = $manager;
+    }
+
+    protected static function getManager(): ManagerRegistry
+    {
+        return self::$manager;
     }
 
     /** @param class-string $entityName */
