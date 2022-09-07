@@ -10,10 +10,12 @@ use App\IEntityService;
 use Doctrine\Persistence\ManagerRegistry;
 use ReflectionClass;
 use ReflectionMethod;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
+use Throwable;
 use function Symfony\Component\String\b;
 
 abstract class Controller extends AbstractController implements IEntityService
@@ -26,12 +28,10 @@ abstract class Controller extends AbstractController implements IEntityService
     private static ?EntityFacade $facade = null;
 
     private static ManagerRegistry $manager;
-    private static SerializerInterface $serializer;
 
-    public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
+    public function __construct(ManagerRegistry $manager)
     {
         self::$manager = $manager;
-        self::$serializer = $serializer;
     }
 
     /**
@@ -76,11 +76,18 @@ abstract class Controller extends AbstractController implements IEntityService
         };
     }
 
-    protected function deserialize(string $json, ?string $class): mixed
+    protected function deserialize(string $json, ?SerializerInterface $serializer = null, ?string $class = null): mixed
     {
-        //TODO: implementar esse método corretamente baseado em injeção de dependência
-        return $class
-            ? self::$serializer->deserialize($json, $class, 'json')
-            : json_decode($json);
+        try {
+            return $serializer && $class
+                ? $serializer->deserialize($json, $class, 'json')
+                : json_decode($json);
+        } catch (Throwable $e) {
+            throw new RuntimeException(
+                message: 'Não foi possível desserializar a requisição'
+                . ($class && " como um objeto de '$class'") . '!',
+                previous: $e
+            );
+        }
     }
 }

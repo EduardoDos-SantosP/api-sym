@@ -2,45 +2,40 @@
 
 namespace App\Facade;
 
-use App\Entity\Model;
 use App\Entity\Sessao;
 use App\Entity\Usuario;
 use App\Helper\DateTimeLocal;
-use RuntimeException;
 
 class SessaoFacade extends EntityFacade
 {
-
-
-    public function open(Sessao $sessao): Sessao
+    public function open(Sessao $sessao): void
     {
+        //TODO: validar a a existência de mais de uma sessão aberta por usuário
+
+        $usuarioFacade = new UsuarioFacade(self::getManager());
+
         /** @var Usuario $usuario */
-        $usuario = (new UsuarioFacade(self::getManager()))
-            ->byId($sessao->getUsuario()->getId());
-
-        /*$sessao->setUsuario($usuario);
-        return $sessao;*/
-
-        if (!$usuario)
-            throw new RuntimeException('Nenhum usuário informado para o início da sessão!');
+        $usuario = $usuarioFacade->byId($sessao->getUsuario()->getId());
 
         self::getRepository()->store(
-            $sessao
-                ->setUsuario($usuario)
+            (new Sessao())
                 ->setAtivo(true)
+                ->setUsuario($usuario)
                 ->setDataInicio(new DateTimeLocal())
         );
-        return $sessao;
     }
 
-    /** @param $model Sessao */
-    public function store(Model $model): void
+    public function close(Sessao $sessao): void
     {
-        $this->{$model->getId() ? 'close' : 'open'}($model);
-    }
+        $repository = self::getRepository();
 
-    public function close(Sessao $sessao): Sessao
-    {
+        /** @var Sessao $sessao */
+        $sessao = $repository->byId($sessao->getId());
 
+        $repository->store(
+            $sessao
+                ->setAtivo(false)
+                ->setDataFim(new DateTimeLocal())
+        );
     }
 }
