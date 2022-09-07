@@ -20,8 +20,9 @@ abstract class Model implements JsonSerializable
     #[Column(type: 'integer')]
     protected int $id = 0;
 
-    public function __construct(array $map = null)
+    public function __construct(int $id = 0, array $map = null)
     {
+        $this->id = max([$id, 0]);
         if (!$map) return;
 
         foreach ($map as $prop => $value) {

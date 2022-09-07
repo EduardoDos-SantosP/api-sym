@@ -18,6 +18,7 @@ use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Yaml\Yaml;
 use function Symfony\Component\String\b;
 
@@ -27,7 +28,7 @@ class AppController extends Controller
 
     public function __construct(ManagerRegistry $manager, ContainerBagInterface $bag)
     {
-        parent::__construct($manager);
+        parent::__construct($manager, new Serializer());
         $this->projectDir = $bag->get('kernel.project_dir');
     }
 
