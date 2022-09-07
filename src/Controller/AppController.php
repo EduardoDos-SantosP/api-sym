@@ -12,6 +12,8 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionType;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -84,7 +86,7 @@ class AppController extends Controller
         $setRootRoute = $controller === self::class;
 
         $getPublicMethods =
-            fn(string $contollerName) => (new ReflectionClass($contollerName))
+            fn(string $contollerName): array => (new ReflectionClass($contollerName))
                 ->getMethods(ReflectionMethod::IS_PUBLIC);
         $actions = array_filter(
             $getPublicMethods($controller),
@@ -101,13 +103,9 @@ class AppController extends Controller
         $rootPath = '/' . $normalizeRoute("$controller/$loadRoutesMethodName");
 
         $yamlMap = [];
+        /** @var ReflectionMethod $action */
         foreach ($actions as $action) {
-            //Verifica se não retorna um Response
-            if (
-                !class_exists($className = $action->getReturnType()?->getName()) ||
-                !in_array(Response::class, class_parents($className)) &&
-                $className !== Response::class//TODO: verificar a necessidade dessa linha
-            ) continue;
+            if (!$this->isActionReturnType($action->getReturnType())) continue;
 
             $attributes = collect($action->getAttributes());
 
@@ -132,6 +130,20 @@ class AppController extends Controller
             $yamlMap[$rootNameRoute]['path'] = ($path = $yamlMap[$rootNameRoute]['path']) === $rootPath ? '/' : $path;
 
         return $yamlMap;
+    }
+
+    private function isActionReturnType(?ReflectionType $type): bool
+    {
+        if ($type === null) return false;
+
+        /** @var ReflectionNamedType[] $types */
+        $types = is_a($type, ReflectionNamedType::class) ? [$type] : $type->getTypes();
+
+        return collect($types)->every(
+            fn(ReflectionNamedType $t) => class_exists($typeName = $t->getName()) &&
+                !$t->allowsNull() &&
+                in_array(Response::class, [$typeName, ...class_parents($typeName)])
+        );
     }
 
     public function getProjectDir(): string
