@@ -13,6 +13,7 @@ use ReflectionMethod;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
@@ -29,9 +30,12 @@ abstract class Controller extends AbstractController implements IEntityService
 
     private static ManagerRegistry $manager;
 
-    public function __construct(ManagerRegistry $manager)
+    private SerializerInterface $serializer;
+
+    public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
     {
         self::$manager = $manager;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -76,16 +80,24 @@ abstract class Controller extends AbstractController implements IEntityService
         };
     }
 
-    protected function deserialize(string $json, ?SerializerInterface $serializer = null, ?string $class = null): mixed
+    protected function deserialize(
+        Request|string $requestOrJson,
+        ?string        $class = null
+    ): mixed
     {
+        $json = is_string($requestOrJson)
+            ? $requestOrJson
+            : $requestOrJson->getContent();
+        $class = $class ?? self::getModelName();
+
         try {
-            return $serializer && $class
-                ? $serializer->deserialize($json, $class, 'json')
+            return $class
+                ? $this->serializer->deserialize($json, $class, 'json')
                 : json_decode($json);
         } catch (Throwable $e) {
             throw new RuntimeException(
                 message: 'Não foi possível desserializar a requisição'
-                . ($class && " como um objeto de '$class'") . '!',
+                . ($class ? " como um objeto de '$class'" : '') . '!',
                 previous: $e
             );
         }

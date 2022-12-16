@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Annotation\Routing\NotAuthenticate;
 use App\Annotation\Routing\NotRouted;
 use App\Annotation\Routing\RouteParams;
 use App\Helper\ReflectionHelper;
@@ -32,7 +33,8 @@ class AppController extends Controller
         $this->projectDir = $bag->get('kernel.project_dir');
     }
 
-    public function loadRoutes(ManagerRegistry $bag): Response|null
+    #[NotAuthenticate]
+    public function loadRoutes(): Response
     {
         $this->autoLoadRoutes();
         return $this->json('Rotas geradas com sucesso!');
@@ -82,26 +84,26 @@ class AppController extends Controller
         return $controllers;
     }
 
-    private function getControllerRoutes(string $controller): array
+    private function getControllerRoutes(string $controllerClass): array
     {
-        $setRootRoute = $controller === self::class;
+        $setRootRoute = $controllerClass === self::class;
 
         $getPublicMethods =
             fn(string $contollerName): array => (new ReflectionClass($contollerName))
                 ->getMethods(ReflectionMethod::IS_PUBLIC);
         $actions = array_filter(
-            $getPublicMethods($controller),
+            $getPublicMethods($controllerClass),
             fn(ReflectionMethod $m) => !in_array($m, $getPublicMethods(Controller::class))
         );
 
-        $controller = b($controller)->beforeLast('Controller');
+        $controllerName = b($controllerClass)->beforeLast('Controller');
 
         $normalizeRoute = fn(string $name): string => b($name)->afterLast('\\')->lower();
-        $nameRoute = fn(string $action) => $normalizeRoute($controller . '_' . $action);
+        $nameRoute = fn(string $action) => $normalizeRoute($controllerName . '_' . $action);
 
         $loadRoutesMethodName = (new ReflectionFunction($this->loadRoutes(...)))->name;
         $rootNameRoute = $nameRoute($loadRoutesMethodName);
-        $rootPath = '/' . $normalizeRoute("$controller/$loadRoutesMethodName");
+        $rootPath = '/' . $normalizeRoute("$controllerName/$loadRoutesMethodName");
 
         $yamlMap = [];
         /** @var ReflectionMethod $action */
@@ -120,11 +122,15 @@ class AppController extends Controller
             /** @var $params ?RouteParams */
             $params = $getAttr(RouteParams::class)?->newInstance();
 
-            $yamlMap[$nameRoute($action = $action->name)] = [
-                'path' => '/' . $normalizeRoute("$controller/$action") . $params?->toUri(),
-                'controller' => $controller . "Controller::$action",
+            $yamlMap[$nameRoute($actionName = $action->name)] = [
+                'path' => '/' . $normalizeRoute("$controllerName/$actionName") . $params?->toUri(),
+                'controller' => $controllerName . "Controller::$actionName",
                 ...collect(['requirements', 'defaults'])
-                    ->mapWithKeys(fn($p) => [$p => $params?->$p])->filter()->all()
+                    ->mapWithKeys(fn($p) => [$p => $params?->$p])->filter()->all(),
+                ...((new ReflectionHelper($controllerClass))
+                    ->getAttrFromMethodOrProp($actionName, NotAuthenticate::class)
+                    ? [] : ['condition' => 'service("authenticator").authenticate(request)']
+                )
             ];
         }
         if ($setRootRoute)

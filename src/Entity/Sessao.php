@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\DateTimeLocal;
 use App\Repository\SessaoRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
@@ -15,15 +16,20 @@ class Sessao extends Model
     #[ManyToOne(targetEntity: Usuario::class)]
     #[JoinColumn(nullable: false)]
     private Usuario $usuario;
-
     #[Column(type: 'datetime')]
     private DateTimeInterface $dataInicio;
-
     #[Column(type: 'datetime', nullable: true)]
     private DateTimeInterface $dataFim;
-
     #[Column(type: 'boolean')]
     private bool $ativo;
+
+    public function __construct(Usuario $usuario = null)
+    {
+        parent::__construct();
+        $this->usuario = $usuario;
+        $this->dataInicio = new DateTimeLocal();
+        $this->ativo = true;
+    }
 
     public function getUsuario(): ?Usuario
     {
@@ -71,5 +77,15 @@ class Sessao extends Model
         $this->ativo = $ativo;
 
         return $this;
+    }
+
+    public function tokenize(): array
+    {
+        return [
+            'iat' => $this->dataInicio->getTimestamp(),
+            'exp' => $this->dataInicio->getTimestamp() + 60 * 60,
+            'ses' => $this->id,
+            'usr' => $this->usuario?->id ?? 0
+        ];
     }
 }
