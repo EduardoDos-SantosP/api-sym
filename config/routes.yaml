@@ -41,7 +41,6 @@ sessao_close:
 usuario_new:
     path: /usuario/new
     controller: 'App\Controller\UsuarioController::new'
-    condition: 'service("authenticator").authenticate(request)'
 usuario_login:
     path: /usuario/login
     controller: 'App\Controller\UsuarioController::login'
