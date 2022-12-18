@@ -12,7 +12,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class UsuarioController extends Controller implements ISearcherController
+class UsuarioController extends EntityController implements ISearcherController
 {
 	#[NotAuthenticate]
 	public function new(Request $request): JsonResponse
@@ -48,5 +48,10 @@ class UsuarioController extends Controller implements ISearcherController
 	public function byId(int $id): JsonResponse
 	{
 		return $this->json(self::getFacade()->byId($id));
+	}
+	
+	public function delete(Usuario $usuario): JsonResponse
+	{
+		return $this->json($usuario);
 	}
 }

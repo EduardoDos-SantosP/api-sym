@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Support\Collection;
 use ReflectionAttribute;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -19,11 +18,7 @@ final class MetaHelper
 	
 	public static function getPublicMethods(string|ReflectionClass $class): ?Collection
 	{
-		try {
-			$class = is_string($class) ? new ReflectionClass($class) : $class;
-		} catch (ReflectionException $e) {
-			return null;
-		}
+		$class = is_string($class) ? new ReflectionClass($class) : $class;
 		return collect($class->getMethods(ReflectionMethod::IS_PUBLIC));
 	}
 	

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SessaoController extends Controller implements ISearcherController
+class SessaoController extends EntityController implements ISearcherController
 {
 	public function open(Request $request): Response
 	{

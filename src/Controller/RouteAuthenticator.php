@@ -26,6 +26,7 @@ class RouteAuthenticator
 	
 	public function authenticate(Request $request): bool
 	{
+		//dd($request);
 		$dirtyToken = $request?->headers?->get('authorization');
 		if (!$dirtyToken) return false;
 		$token = preg_replace('/^' . self::TOKEN_PREFIX . '/i', '', trim($dirtyToken), 1);

@@ -2,14 +2,9 @@
 
 namespace App\Controller;
 
-use App\EntityServiceTrait;
-use App\Enum\EnumServiceType;
-use App\Facade\EntityFacade;
-use App\Helper\Singleton;
-use App\IEntityService;
-use Doctrine\Persistence\ManagerRegistry;
-use ReflectionClass;
+use App\Helper\MetaHelper;
 use ReflectionMethod;
+use ReflectionObject;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,31 +15,16 @@ use Symfony\Component\String\ByteString;
 use Throwable;
 use function Symfony\Component\String\b;
 
-abstract class Controller extends AbstractController implements IEntityService
+class Controller extends AbstractController
 {
-	use EntityServiceTrait;
-	
 	private const JSON_RESPONSE_CONFIG = JsonResponse::DEFAULT_ENCODING_OPTIONS |
 	JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR;
 	
-	private static ?EntityFacade $facade = null;
-	
-	private static ManagerRegistry $manager;
-	
 	private SerializerInterface $serializer;
 	
-	public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
+	public function __construct(SerializerInterface $serializer)
 	{
-		self::$manager = $manager;
 		$this->serializer = $serializer;
-	}
-	
-	/**
-	 * @return ManagerRegistry
-	 */
-	public static function getManager(): ManagerRegistry
-	{
-		return self::$manager;
 	}
 	
 	public static function getShortName(string $controllerClass = null): ByteString
@@ -55,15 +35,6 @@ abstract class Controller extends AbstractController implements IEntityService
 	public static function getName(string $controllerClass = null): ByteString
 	{
 		return b($controllerClass ?? static::class)->trimSuffix('Controller');
-	}
-	
-	protected static function getFacade(): EntityFacade
-	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return Singleton::getInstance(
-			'controller_facade',
-			fn() => self::findByEntity(self::getModelName(), EnumServiceType::Facade, self::$manager)
-		);
 	}
 	
 	protected function json(
@@ -78,28 +49,24 @@ abstract class Controller extends AbstractController implements IEntityService
 		return $response;
 	}
 	
-	protected function uncapsuleObj(mixed $o): mixed
+	protected function uncapsuleObj(mixed $obj): mixed
 	{
 		return match (true) {
-			is_iterable($o) => collect($o)->map($this->uncapsuleObj(...)),
-			is_object($o) => collect((new ReflectionClass($o))->getMethods(ReflectionMethod::IS_PUBLIC))
+			is_iterable($obj) => collect($obj)->map($this->uncapsuleObj(...)),
+			is_object($obj) => MetaHelper::getPublicMethods(new ReflectionObject($obj))
 				->mapWithKeys(fn(ReflectionMethod $m) => ($methodName = b($m->name))
 					->equalsTo($propName = $methodName->trimPrefix('get'))
-					? [0 => null] : [(string)$propName->camel() => $o->{"get$propName"}()]
+					? [0 => null] : [(string)$propName->camel() => $obj->{"get$propName"}()]
 				)->filter()->all(),
-			default => $o
+			default => $obj
 		};
 	}
 	
-	protected function deserialize(
-		Request|string $requestOrJson,
-		?string $class = null
-	): mixed {
+	protected function deserialize(Request|string $requestOrJson, string $class): mixed
+	{
 		$json = is_string($requestOrJson)
 			? $requestOrJson
 			: $requestOrJson->getContent();
-		$class = $class ?? self::getModelName();
-		
 		try {
 			return $class
 				? $this->serializer->deserialize($json, $class, 'json')

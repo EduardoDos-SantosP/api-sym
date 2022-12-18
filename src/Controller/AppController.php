@@ -8,7 +8,6 @@ use App\Annotation\Routing\NotRouted;
 use App\Annotation\Routing\RouteOptions;
 use App\Helper\MetaHelper;
 use DirectoryIterator;
-use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Psr\Container\ContainerExceptionInterface;
@@ -31,14 +30,17 @@ class AppController extends Controller
 {
 	public readonly string $projectDir;
 	
-	public function __construct(ManagerRegistry $manager, ContainerBagInterface $bag)
+	public function __construct(ContainerBagInterface $container)
 	{
-		parent::__construct($manager, new Serializer());
+		parent::__construct(new Serializer());
 		$projectDirResourceName = 'kernel.project_dir';
 		try {
-			$this->projectDir = $bag->get($projectDirResourceName);
+			$this->projectDir = $container->get($projectDirResourceName);
 		} catch (ContainerExceptionInterface $e) {
-			throw new RuntimeException("Falha ao encontrar o recurso '$projectDirResourceName' no container!");
+			throw new RuntimeException(
+				"Falha ao encontrar o recurso '$projectDirResourceName' no container!",
+				previous: $e
+			);
 		}
 	}
 	
@@ -140,18 +142,5 @@ class AppController extends Controller
 		$routesPath = "$this->projectDir/config/routes.yaml";
 		if (!file_exists($routesPath)) throw new RuntimeException("O arquivo de rotas $routesPath não foi encontrado!");
 		return $routesPath;
-	}
-	
-	private function isActionReturnType(?ReflectionType $type): bool
-	{
-		if ($type === null) return false;
-		
-		/** @var ReflectionNamedType[] $types */
-		$types = is_a($type, ReflectionNamedType::class) ? [$type] : $type->getTypes();
-		
-		return collect($types)->every(
-			fn(ReflectionNamedType $t) => class_exists($typeName = $t->getName()) && !$t->allowsNull() &&
-				in_array(Response::class, [$typeName, ...class_parents($typeName)])
-		);
 	}
 }
