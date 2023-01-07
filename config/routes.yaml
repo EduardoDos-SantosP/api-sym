@@ -53,6 +53,6 @@ usuario_byid:
     controller: 'App\Controller\UsuarioController::byId'
     condition: 'service("authenticator").authenticate(request)'
 usuario_delete:
-    path: '/usuario/delete/{id}'
+    path: /usuario/delete
     controller: 'App\Controller\UsuarioController::delete'
     condition: 'service("authenticator").authenticate(request)'

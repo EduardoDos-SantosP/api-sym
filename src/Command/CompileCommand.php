@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Controller\AppController;
+use App\Other\RouteGenerator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CompileCommand extends Command
 {
 	public function __construct(
-		protected readonly AppController $bag,
+		protected readonly RouteGenerator $generator,
 		string $name = null
 	) {
 		parent::__construct($name);
@@ -20,7 +20,7 @@ class CompileCommand extends Command
 	
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$this->bag->doLoadRoutes();
+		$this->generator->loadRoutes();
 		$output->writeln('Rotas geradas com sucesso!');
 		return Command::SUCCESS;
 	}

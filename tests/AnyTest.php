@@ -2,17 +2,17 @@
 
 namespace App\Tests;
 
-use DateTime;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
+use function Symfony\Component\String\b;
 
 class AnyTest extends TestCase
 {
 	public function testAnything()
 	{
-		$d = new DateTime();
-		new ReflectionClass(AnyTest::class);
-		dump($d->diff(new DateTime())->f * 100);
+		dump(
+			b('\t2 => fn(AlgumController $c): \\Closure => $c->algumMetodo2(...),\n')
+				->match('/(\d) => .*->([\dA-z]+)\(\.\.\.\)/')
+		);
 		
 		self::assertSame(0, 0);
 	}

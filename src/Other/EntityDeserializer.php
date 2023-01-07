@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Other;
 
 use App\Entity\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
