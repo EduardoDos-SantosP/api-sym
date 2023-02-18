@@ -2,18 +2,13 @@
 
 namespace App\Tests;
 
-use DateTime;
+use App\Entity\Model;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 class AnyTest extends TestCase
 {
 	public function testAnything()
 	{
-		$d = new DateTime();
-		new ReflectionClass(AnyTest::class);
-		dump($d->diff(new DateTime())->f * 100);
-		
-		self::assertSame(0, 0);
+		self::assertSame(true, is_a(Model::class, Model::class, true));
 	}
 }

@@ -75,7 +75,8 @@
 			"@load-routes",
 			"Composer\\Config::disableProcessTimeout",
 			"symfony server:start"
-		]
+		],
+		"test": "php bin/phpunit"
 	},
 	"conflict": {
 		"symfony/symfony": "*"

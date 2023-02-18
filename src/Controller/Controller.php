@@ -15,7 +15,7 @@ use Symfony\Component\String\ByteString;
 use Throwable;
 use function Symfony\Component\String\b;
 
-class Controller extends AbstractController
+abstract class Controller extends AbstractController
 {
 	private const JSON_RESPONSE_CONFIG = JsonResponse::DEFAULT_ENCODING_OPTIONS |
 	JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR;
