@@ -22,6 +22,8 @@ class ContabilController extends EntityController
 	
 	public function new(Contabil $contabil): Response
 	{
+		$this->getFacade()->store($contabil);
+		
 		return $this->json($contabil);
 	}
 }
