@@ -27,7 +27,7 @@ class AnyTest extends KernelTestCase
 	/**
 	 * @dataProvider fornecedorDeControllers
 	 */
-	public function testConsulta1(ContabilController $controller)
+	public function testConsulta1(ContabilController $controller): void
 	{
 		$r = json_decode($controller->all()->getContent());
 		dump(__METHOD__, $r);
@@ -38,7 +38,7 @@ class AnyTest extends KernelTestCase
 	/**
 	 * @dataProvider fornecedorDeControllers
 	 */
-	public function testCriarNovo(ContabilController $controller)
+	public function testCriarNovo(ContabilController $controller): void
 	{
 		$model = new Contabil();
 		$model->setNome('T1');
@@ -54,7 +54,7 @@ class AnyTest extends KernelTestCase
 	/**
 	 * @dataProvider fornecedorDeControllers
 	 */
-	public function testConsulta2(ContabilController $controller)
+	public function testConsulta2(ContabilController $controller): void
 	{
 		$r = json_decode($controller->all()->getContent());
 		dump(__METHOD__, $r);
