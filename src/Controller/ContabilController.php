@@ -17,12 +17,12 @@ class ContabilController extends EntityController
 	
 	public function all(): JsonResponse
 	{
-		return $this->json(self::getFacade()->all());
+		return $this->json(self::getBo()->all());
 	}
 	
 	public function new(Contabil $contabil): Response
 	{
-		$this->getFacade()->store($contabil);
+		$this->getBo()->store($contabil);
 		
 		return $this->json($contabil);
 	}

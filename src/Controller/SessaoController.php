@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Annotation\Routing\RouteOptions;
+use App\Bo\SessaoBo;
 use App\Contract\ISearcherController;
 use App\Entity\Sessao;
-use App\Facade\SessaoFacade;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,22 +21,22 @@ class SessaoController extends EntityController implements ISearcherController
 		if (!$sessao->getUsuario()?->getId())
 			throw new RuntimeException('Nenhum usuário com id informado para o início da sessão!');
 		
-		/** @var SessaoFacade $facade */
-		$facade = self::getFacade();
-		$facade->open($sessao);
+		/** @var SessaoBo $bo */
+		$bo = self::getBo();
+		$bo->open($sessao);
 		
 		return new Response('Sessão iniciada com sucesso!', Response::HTTP_CREATED);
 	}
 	
 	public function all(): JsonResponse
 	{
-		return $this->json(self::getFacade()->all());
+		return $this->json(self::getBo()->all());
 	}
 	
 	#[RouteOptions(parameters: ['id'])]
 	public function byId(int $id): JsonResponse
 	{
-		return $this->json(self::getFacade()->byId($id));
+		return $this->json(self::getBo()->byId($id));
 	}
 	
 	public function close(Request $request): Response
@@ -47,9 +47,9 @@ class SessaoController extends EntityController implements ISearcherController
 		if (!$sessao->getId())
 			throw new RuntimeException('A sessão precisa ter um id para ser fechada!');
 		
-		/** @var SessaoFacade $facade */
-		$facade = self::getFacade();
-		$facade->close($sessao);
+		/** @var SessaoBo $bo */
+		$bo = self::getBo();
+		$bo->close($sessao);
 		
 		return new Response('Sessão finalizada com sucesso!', Response::HTTP_OK);
 	}

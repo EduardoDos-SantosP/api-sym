@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Bo\EntityBo;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\Facade\EntityFacade;
 use App\Helper\Singleton;
 use App\IEntityService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,7 +16,7 @@ abstract class EntityController extends Controller implements IEntityService
 	use EntityServiceTrait;
 	
 	private static ManagerRegistry $manager;
-	private static ?EntityFacade $facade = null;
+	private static ?EntityBo $bo = null;
 	
 	public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
 	{
@@ -29,12 +29,12 @@ abstract class EntityController extends Controller implements IEntityService
 		return self::$manager;
 	}
 	
-	protected static function getFacade(): EntityFacade
+	protected static function getBo(): EntityBo
 	{
-		/** @var EntityFacade $service */
+		/** @var EntityBo $service */
 		$service = Singleton::getInstance(
-			'controller_facade',
-			fn() => self::findByEntity(self::getModelName(), EnumServiceType::Facade, self::$manager)
+			'controller_bo',
+			fn() => self::findByEntity(self::getModelName(), EnumServiceType::Bo, self::$manager)
 		);
 		return $service;
 	}
