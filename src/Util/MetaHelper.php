@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helper;
+namespace App\Util;
 
 use Closure;
 use Illuminate\Support\Collection;

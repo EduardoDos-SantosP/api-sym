@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Helper\MetaHelper;
+use App\Util\MetaHelper;
 use ReflectionMethod;
 use ReflectionObject;
 use RuntimeException;

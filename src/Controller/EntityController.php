@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Bo\EntityBo;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\Helper\Singleton;
 use App\IEntityService;
+use App\Util\Singleton;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -29,7 +29,7 @@ abstract class EntityController extends Controller implements IEntityService
 		return self::$manager;
 	}
 	
-	protected static function getBo(): EntityBo
+	public static function getBo(): EntityBo
 	{
 		/** @var EntityBo $service */
 		$service = Singleton::getInstance(

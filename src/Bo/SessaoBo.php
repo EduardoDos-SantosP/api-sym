@@ -4,7 +4,7 @@ namespace App\Bo;
 
 use App\Entity\Sessao;
 use App\Entity\Usuario;
-use App\Helper\DateTimeLocal;
+use App\Util\DateTimeLocal;
 
 class SessaoBo extends EntityBo
 {

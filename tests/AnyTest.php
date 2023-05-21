@@ -4,7 +4,7 @@ namespace App\Tests;
 
 use App\Controller\ContabilController;
 use App\Entity\Contabil;
-use App\Helper\DateTimeLocal;
+use App\Util\DateTimeLocal;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AnyTest extends KernelTestCase

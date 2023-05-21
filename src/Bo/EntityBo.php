@@ -7,9 +7,9 @@ use App\Contract\IStorer;
 use App\Entity\Model;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\Helper\Singleton;
 use App\IEntityService;
 use App\Repository\Repository;
+use App\Util\Singleton;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Support\Collection;
 

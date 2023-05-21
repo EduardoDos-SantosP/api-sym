@@ -6,7 +6,7 @@ use App\Annotation\Routing\DevRoute;
 use App\Annotation\Routing\NotAuthenticate;
 use App\Annotation\Routing\NotRouted;
 use App\Annotation\Routing\RouteOptions;
-use App\Helper\MetaHelper;
+use App\Util\MetaHelper;
 use DirectoryIterator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;

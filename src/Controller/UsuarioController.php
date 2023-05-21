@@ -15,12 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 class UsuarioController extends EntityController implements ISearcherController
 {
 	#[NotAuthenticate]
-	public function new(Request $request): JsonResponse
+	public function new(?Usuario $usuario): JsonResponse
 	{
-		/** @var Usuario $u */
-		$u = $this->deserialize($request);
-		self::getBo()->store($u);
-		return $this->json($u);
+		self::getBo()->store($usuario);
+		return $this->json($usuario);
 	}
 	
 	#[NotAuthenticate]
