@@ -20,9 +20,16 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Annotation/'
+            - '../src/Enum/'
+            - '../src/Util/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Bo\:
+        resource: '../src/Bo/'
+        public: true
 
     App\Controller\RouteAuthenticator:
         arguments:
