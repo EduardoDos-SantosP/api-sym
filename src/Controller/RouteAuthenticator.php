@@ -26,7 +26,8 @@ class RouteAuthenticator
 	
 	public function authenticate(Request $request): bool
 	{
-		//return true;
+		if ($_ENV['APP_ENV'] === 'dev' && !$request->query->getBoolean('authenticate'))
+			return true;
 		$dirtyToken = $request?->headers?->get('authorization');
 		if (!$dirtyToken) return false;
 		$token = preg_replace('/^' . self::TOKEN_PREFIX . '/i', '', trim($dirtyToken), 1);
