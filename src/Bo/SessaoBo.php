@@ -12,12 +12,12 @@ class SessaoBo extends EntityBo
 	{
 		//TODO: validar a a existência de mais de uma sessão aberta por usuário
 		
-		$usuarioBo = new UsuarioBo(self::getManager());
+		$usuarioBo = new UsuarioBo($this->getRepository());
 		
 		/** @var Usuario $usuario */
 		$usuario = $usuarioBo->byId($sessao->getUsuario()->getId());
 		
-		self::getRepository()->store(
+		$this->getRepository()->store(
 			(new Sessao())
 				->setAtivo(true)
 				->setUsuario($usuario)
@@ -27,7 +27,7 @@ class SessaoBo extends EntityBo
 	
 	public function close(Sessao $sessao): void
 	{
-		$repository = self::getRepository();
+		$repository = $this->getRepository();
 		
 		/** @var Sessao $sessao */
 		$sessao = $repository->byId($sessao->getId());

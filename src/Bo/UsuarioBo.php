@@ -20,7 +20,7 @@ class UsuarioBo extends EntityBo
 	
 	public function getUserByCredentials(Usuario $usuario): ?Usuario
 	{
-		return self::getRepository()->all()
+		return $this->getRepository()->all()
 			->first(
 				fn(Usuario $u) => $u->getLogin() == $usuario->getLogin()
 					&& password_verify($usuario->getSenha(), $u->getSenha())

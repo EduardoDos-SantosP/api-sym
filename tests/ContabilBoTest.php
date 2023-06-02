@@ -12,7 +12,6 @@ class ContabilBoTest extends AbstractEntityBoTest
 		/** @var ContabilBo $bo */
 		$bo = self::getContainer()->get(ContabilBo::class)/*::getBo()*/
 		;
-		dump($bo);
 		return $bo;
 	}
 }

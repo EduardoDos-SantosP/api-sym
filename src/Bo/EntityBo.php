@@ -6,10 +6,8 @@ use App\Contract\ISearcher;
 use App\Contract\IStorer;
 use App\Entity\Model;
 use App\EntityServiceTrait;
-use App\Enum\EnumServiceType;
 use App\IEntityService;
 use App\Repository\Repository;
-use App\Util\Singleton;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Support\Collection;
 
@@ -17,53 +15,39 @@ abstract class EntityBo implements IEntityService, IBo, ISearcher, IStorer
 {
 	use EntityServiceTrait;
 	
-	private static ?Repository $repository = null;
-	protected static ManagerRegistry $manager;
+	public function __construct(
+		private readonly Repository $repository
+	) {}
 	
-	public function __construct(ManagerRegistry $manager)
+	public static function createBo(ManagerRegistry $manager): static
 	{
-		self::$manager = $manager;
-	}
-	
-	protected static function getManager(): ManagerRegistry
-	{
-		return self::$manager;
-	}
-	
-	/** @param class-string $entityName */
-	protected static function createNew(ManagerRegistry $manager, string $entityName): EntityBo
-	{
-		/** @var $service EntityBo */
-		$service = self::createFromEntity($entityName, $manager);
-		return $service;
+		$repositotyClass = str_replace('Bo', 'Repository', static::class);
+		$repositoty = new $repositotyClass($manager);
+		return new static($repositoty);
 	}
 	
 	public function all(): Collection
 	{
-		return self::getRepository()->all();
+		return $this->getRepository()->all();
 	}
 	
-	protected static function getRepository(): Repository
+	protected function getRepository(): Repository
 	{
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return Singleton::getInstance(
-			'bo_repository',
-			fn() => self::findByEntity(self::getModelName(), EnumServiceType::Repository, self::$manager)
-		);
+		return $this->repository;
 	}
 	
 	public function byId(int $id): ?Model
 	{
-		return self::getRepository()->byId($id);
+		return $this->getRepository()->byId($id);
 	}
 	
 	public function store(Model $model): void
 	{
-		self::getRepository()->store($model);
+		$this->getRepository()->store($model);
 	}
 	
 	public function delete(Model $model): void
 	{
-		self::getRepository()->delete($model);
+		$this->getRepository()->delete($model);
 	}
 }

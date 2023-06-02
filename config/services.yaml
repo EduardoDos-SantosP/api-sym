@@ -29,7 +29,9 @@ services:
 
     App\Bo\:
         resource: '../src/Bo/'
+        factory: [ null, 'createBo' ]
         public: true
+        tags: [ 'app.bo' ]
 
     App\Controller\RouteAuthenticator:
         arguments:
