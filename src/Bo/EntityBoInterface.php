@@ -4,16 +4,16 @@ namespace App\Bo;
 
 use App\Contract\ISearcher;
 use App\Contract\IStorer;
+use App\DependencyInjection\ServiceLocatorInterface;
 use App\Entity\Model;
+use App\EntityServiceInterface;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\IEntityService;
 use App\Repository\Repository;
-use App\ServiceLocator\ServiceLocatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Support\Collection;
 
-abstract class EntityBo implements IEntityService, IBo, ISearcher, IStorer
+abstract class EntityBoInterface implements EntityServiceInterface, IBo, ISearcher, IStorer
 {
 	use EntityServiceTrait;
 	

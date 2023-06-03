@@ -6,7 +6,7 @@ use App\Entity\Contabil;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContabilController extends EntityController
+class ContabilController extends EntityControllerInterface
 {
 	public function index(): JsonResponse
 	{

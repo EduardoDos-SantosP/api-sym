@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Bo\EntityBo;
+use App\Bo\EntityBoInterface;
+use App\DependencyInjection\ServiceLocatorInterface;
+use App\EntityServiceInterface;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\IEntityService;
-use App\ServiceLocator\ServiceLocatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 
-abstract class EntityController extends Controller implements IEntityService
+abstract class EntityControllerInterface extends Controller implements EntityServiceInterface
 {
 	use EntityServiceTrait;
 	
-	private readonly EntityBo $bo;
+	private readonly EntityBoInterface $bo;
 	
 	public function __construct(
 		SerializerInterface $serializer,
@@ -22,12 +22,12 @@ abstract class EntityController extends Controller implements IEntityService
 	) {
 		parent::__construct($serializer);
 		
-		/** @var EntityBo $bo */
+		/** @var EntityBoInterface $bo */
 		$bo = $locator->getServiceInstance(EnumServiceType::Bo, self::getModelName());
 		$this->bo = $bo;
 	}
 	
-	public function getBo(): EntityBo
+	public function getBo(): EntityBoInterface
 	{
 		return $this->bo;
 	}

@@ -5,7 +5,7 @@ namespace App\Bo;
 use App\Entity\Model;
 use App\Entity\Usuario;
 
-class UsuarioBo extends EntityBo
+class UsuarioBo extends EntityBoInterface
 {
 	public function store(Model $model): void
 	{

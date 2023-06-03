@@ -3,7 +3,7 @@
 namespace App\Util;
 
 use App\Annotation\Routing\EntityArgProvider;
-use App\Controller\EntityController;
+use App\Controller\EntityControllerInterface;
 use App\Entity\Model;
 use App\Enum\EnumArgProviderMode;
 use ReflectionClass;
@@ -35,7 +35,7 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 		$class = $argProvider->getClassToDeserialize() ?? $argument->getType();
 		
 		if ($class === Model::class) {
-			/** @var EntityController $controller */
+			/** @var EntityControllerInterface $controller */
 			$controller = $this->getController($request, $class);
 			$class = $controller::getModelName();
 		}
@@ -62,7 +62,7 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 	
 	private function query(Request $request, string $class): ?Model
 	{
-		/** @var EntityController $controller */
+		/** @var EntityControllerInterface $controller */
 		$controller = $this->container->get($this->getController($request, $class));
 		
 		$this->requestBody = json_decode($request->getContent(), true);

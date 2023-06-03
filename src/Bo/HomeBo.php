@@ -2,7 +2,7 @@
 
 namespace App\Bo;
 
-class HomeBo extends EntityBo
+class HomeBo extends EntityBoInterface
 {
 
 }

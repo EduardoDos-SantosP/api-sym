@@ -2,6 +2,6 @@
 
 namespace App\Bo;
 
-class ContabilBo extends EntityBo
+class ContabilBo extends EntityBoInterface
 {
 }

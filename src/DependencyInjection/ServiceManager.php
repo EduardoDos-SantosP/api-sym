@@ -1,20 +1,22 @@
 <?php
 
-namespace App\ServiceLocator;
+namespace App\DependencyInjection;
 
 use App\Entity\Model;
+use App\EntityServiceInterface;
 use App\Enum\EnumServiceType;
-use App\IEntityService;
+use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use function Symfony\Component\String\b;
 
-class ServiceLocator implements ServiceLocatorInterface
+class ServiceManager implements ServiceLocatorInterface
 {
 	public function __construct(
-		private readonly ContainerInterface $container
+		private readonly ManagerRegistry $managerRegistry,
+		public readonly ?ContainerInterface $container// = null
 	) {}
 	
 	public function getService(EnumServiceType $serviceType, string $entity): string
@@ -31,15 +33,27 @@ class ServiceLocator implements ServiceLocatorInterface
 		return $service;
 	}
 	
-	public function getServiceInstance(EnumServiceType $serviceType, string $entity): IEntityService
+	public function getServiceInstance(EnumServiceType $serviceType, string $entity): EntityServiceInterface
 	{
 		$service = $this->getService($serviceType, $entity);
 		try {
-			/** @var IEntityService $instance */
+			/** @var EntityServiceInterface $instance */
 			$instance = $this->container->get($service);
 			return $instance;
 		} catch (ServiceNotFoundException $e) {
 			throw new RuntimeException("O serviço '$service' não é acessível pelo container");
 		}
+	}
+	
+	/** @param class-string<Model> $modelName */
+	public function createBoFactory(string $modelName): ServiceFactoryInterface
+	{
+		return new ServiceFactory($modelName, [$this->createRepositoryFactory($modelName)->create()]);
+	}
+	
+	/** @param class-string<Model> $modelName */
+	public function createRepositoryFactory(string $modelName): ServiceFactoryInterface
+	{
+		return new ServiceFactory($modelName, [$this->managerRegistry]);
 	}
 }

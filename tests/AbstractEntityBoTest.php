@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Bo\EntityBo;
+use App\Bo\EntityBoInterface;
 use App\Entity\Model;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -11,7 +11,7 @@ use function Symfony\Component\String\b;
 
 abstract class AbstractEntityBoTest extends KernelTestCase
 {
-	private static ?EntityBo $bo = null;
+	private static ?EntityBoInterface $bo = null;
 	private static array $data = [];
 	
 	public static function setUpBeforeClass(): void
@@ -22,7 +22,7 @@ abstract class AbstractEntityBoTest extends KernelTestCase
 		self::$data[static::class] = (object)[];
 	}
 	
-	public abstract static function getBoInstance(): EntityBo;
+	public abstract static function getBoInstance(): EntityBoInterface;
 	
 	public function testConsulta(): void
 	{

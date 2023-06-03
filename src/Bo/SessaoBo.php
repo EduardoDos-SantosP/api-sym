@@ -6,7 +6,7 @@ use App\Entity\Sessao;
 use App\Entity\Usuario;
 use App\Util\DateTimeLocal;
 
-class SessaoBo extends EntityBo
+class SessaoBo extends EntityBoInterface
 {
 	public function open(Sessao $sessao): void
 	{

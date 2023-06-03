@@ -2,10 +2,10 @@
 
 namespace App\Tests;
 
+use App\DependencyInjection\ServiceLocatorInterface;
 use App\Entity\Contabil;
 use App\Entity\Usuario;
 use App\Enum\EnumServiceType;
-use App\ServiceLocator\ServiceLocatorInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ServiceLocatorTest extends KernelTestCase

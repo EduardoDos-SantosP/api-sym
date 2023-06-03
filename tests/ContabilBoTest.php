@@ -3,11 +3,11 @@
 namespace App\Tests;
 
 use App\Bo\ContabilBo;
-use App\Bo\EntityBo;
+use App\Bo\EntityBoInterface;
 
 class ContabilBoTest extends AbstractEntityBoTest
 {
-	public static function getBoInstance(): EntityBo
+	public static function getBoInstance(): EntityBoInterface
 	{
 		/** @var ContabilBo $bo */
 		$bo = self::getContainer()->get(ContabilBo::class)/*::getBo()*/

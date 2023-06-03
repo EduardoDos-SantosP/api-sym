@@ -44,6 +44,9 @@ services:
         tags:
             - { name: controller.argument_value_resolver, priority: 101 }
 
-    App\ServiceLocator\ServiceLocatorInterface:
-        class: App\ServiceLocator\ServiceLocator
+    App\DependencyInjection\ServiceManager:
+        public: true
+
+    App\DependencyInjection\ServiceLocatorInterface:
+        class: App\DependencyInjection\ServiceManager
         public: true
