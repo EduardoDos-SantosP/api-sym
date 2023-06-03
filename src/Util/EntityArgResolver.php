@@ -66,7 +66,7 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 		$controller = $this->container->get($this->getController($request, $class));
 		
 		$this->requestBody = json_decode($request->getContent(), true);
-		return $controller::getBo()->byId($this->requestBody['id'] ?? 0);
+		return $controller->getBo()->byId($this->requestBody['id'] ?? 0);
 	}
 	
 	private function merge(Request $request, string $class): Model

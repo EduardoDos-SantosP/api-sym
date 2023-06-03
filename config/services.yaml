@@ -43,3 +43,7 @@ services:
     App\Util\EntityArgResolver:
         tags:
             - { name: controller.argument_value_resolver, priority: 101 }
+
+    App\ServiceLocator\ServiceLocatorInterface:
+        class: App\ServiceLocator\ServiceLocator
+        public: true

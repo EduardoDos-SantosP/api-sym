@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ContabilRepository;
+use App\Util\DateTimeLocal;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -21,6 +22,12 @@ class Contabil extends Model
 	
 	#[Column(type: 'datetime')]
 	private DateTimeInterface $data;
+	
+	public function __construct(int $id = 0, array $map = null)
+	{
+		parent::__construct($id, $map);
+		$this->data = new DateTimeLocal();
+	}
 	
 	public function getNome(): ?string
 	{

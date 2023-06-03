@@ -6,8 +6,10 @@ use App\Contract\ISearcher;
 use App\Contract\IStorer;
 use App\Entity\Model;
 use App\EntityServiceTrait;
+use App\Enum\EnumServiceType;
 use App\IEntityService;
 use App\Repository\Repository;
+use App\ServiceLocator\ServiceLocatorInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Illuminate\Support\Collection;
 
@@ -19,9 +21,10 @@ abstract class EntityBo implements IEntityService, IBo, ISearcher, IStorer
 		private readonly Repository $repository
 	) {}
 	
-	public static function createBo(ManagerRegistry $manager): static
+	public static function createBo(ServiceLocatorInterface $locator, ManagerRegistry $manager): static
 	{
-		$repositotyClass = str_replace('Bo', 'Repository', static::class);
+		/** @var class-string<Repository> $repositotyClass */
+		$repositotyClass = $locator->getService(EnumServiceType::Repository, self::getModelName());
 		$repositoty = new $repositotyClass($manager);
 		return new static($repositoty);
 	}

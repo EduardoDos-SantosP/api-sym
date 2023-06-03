@@ -17,7 +17,7 @@ class ContabilController extends EntityController
 	
 	public function all(): JsonResponse
 	{
-		return $this->json(self::getBo()->all());
+		return $this->json($this->getBo()->all());
 	}
 	
 	public function new(Contabil $contabil): Response

@@ -22,7 +22,7 @@ class SessaoController extends EntityController implements ISearcherController
 			throw new RuntimeException('Nenhum usuário com id informado para o início da sessão!');
 		
 		/** @var SessaoBo $bo */
-		$bo = self::getBo();
+		$bo = $this->getBo();
 		$bo->open($sessao);
 		
 		return new Response('Sessão iniciada com sucesso!', Response::HTTP_CREATED);
@@ -30,13 +30,13 @@ class SessaoController extends EntityController implements ISearcherController
 	
 	public function all(): JsonResponse
 	{
-		return $this->json(self::getBo()->all());
+		return $this->json($this->getBo()->all());
 	}
 	
 	#[RouteOptions(parameters: ['id'])]
 	public function byId(int $id): JsonResponse
 	{
-		return $this->json(self::getBo()->byId($id));
+		return $this->json($this->getBo()->byId($id));
 	}
 	
 	public function close(Request $request): Response
@@ -48,7 +48,7 @@ class SessaoController extends EntityController implements ISearcherController
 			throw new RuntimeException('A sessão precisa ter um id para ser fechada!');
 		
 		/** @var SessaoBo $bo */
-		$bo = self::getBo();
+		$bo = $this->getBo();
 		$bo->close($sessao);
 		
 		return new Response('Sessão finalizada com sucesso!', Response::HTTP_OK);

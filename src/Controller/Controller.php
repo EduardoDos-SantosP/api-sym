@@ -20,12 +20,9 @@ abstract class Controller extends AbstractController
 	private const JSON_RESPONSE_CONFIG = JsonResponse::DEFAULT_ENCODING_OPTIONS |
 	JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR;
 	
-	private SerializerInterface $serializer;
-	
-	public function __construct(SerializerInterface $serializer)
-	{
-		$this->serializer = $serializer;
-	}
+	public function __construct(
+		private readonly SerializerInterface $serializer
+	) {}
 	
 	public static function getShortName(string $controllerClass = null): ByteString
 	{

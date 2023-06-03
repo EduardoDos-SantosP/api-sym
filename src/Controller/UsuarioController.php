@@ -17,7 +17,7 @@ class UsuarioController extends EntityController implements ISearcherController
 	#[NotAuthenticate]
 	public function new(?Usuario $usuario): JsonResponse
 	{
-		self::getBo()->store($usuario);
+		$this->getBo()->store($usuario);
 		return $this->json($usuario);
 	}
 	
@@ -25,7 +25,7 @@ class UsuarioController extends EntityController implements ISearcherController
 	public function login(Request $request, RouteAuthenticator $authenticator): JsonResponse
 	{
 		/** @var UsuarioBo $service */
-		$service = self::getBo();
+		$service = $this->getBo();
 		$usuario = $service->getUserByCredentials($this->deserialize($request));
 		
 		if (!isset($usuario))
@@ -39,13 +39,13 @@ class UsuarioController extends EntityController implements ISearcherController
 	
 	public function all(): JsonResponse
 	{
-		return $this->json(self::getBo()->all());
+		return $this->json($this->getBo()->all());
 	}
 	
 	#[RouteOptions(parameters: ['id'])]
 	public function byId(int $id): JsonResponse
 	{
-		return $this->json(self::getBo()->byId($id));
+		return $this->json($this->getBo()->byId($id));
 	}
 	
 	public function delete(Usuario $usuario): JsonResponse

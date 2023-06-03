@@ -12,7 +12,7 @@ use Throwable;
 use function Symfony\Component\String\b;
 
 #[NotRouted]
-class ThrowableController extends EntityController
+class ThrowableController extends Controller
 {
 	public function __invoke(Request $request): Response
 	{
