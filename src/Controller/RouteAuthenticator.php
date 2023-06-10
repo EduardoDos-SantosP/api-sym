@@ -35,7 +35,7 @@ class RouteAuthenticator
 	
 	public function authenticate(Request $request): bool
 	{
-		if ($_ENV['APP_ENV'] === 'dev' && !$request->query->getBoolean('authenticate'))
+		if ($_ENV['APP_DEBUG'] && !$request->query->getBoolean('authenticate'))
 			return true;
 		
 		$dirtyToken = $request?->headers?->get('authorization');
