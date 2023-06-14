@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Bo\EntityBo;
+use App\Entity\Model;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
 use App\IEntityService;
 use App\ServiceLocator\ServiceLocatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -30,6 +32,18 @@ abstract class EntityController extends Controller implements IEntityService
 	public function getBo(): EntityBo
 	{
 		return $this->bo;
+	}
+	
+	//#[RouteOptions(parameters: ['id'])]
+	public function byId(Model $model): JsonResponse
+	{
+		return $this->json($model);
+	}
+	
+	public function delete(Model $model): JsonResponse
+	{
+		$this->bo->delete($model);
+		return $this->json($model);
 	}
 	
 	protected function deserialize(string|Request $requestOrJson, ?string $class = null): mixed
