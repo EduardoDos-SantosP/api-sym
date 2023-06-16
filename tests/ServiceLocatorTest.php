@@ -16,7 +16,9 @@ class ServiceLocatorTest extends KernelTestCase
 	{
 		parent::setUpBeforeClass();
 		self::bootKernel();
-		self::$locator = self::getContainer()->get(ServiceLocatorInterface::class);
+		/** @var ServiceLocatorInterface $locator */
+		$locator = self::getContainer()->get(ServiceLocatorInterface::class);
+		self::$locator = $locator;
 	}
 	
 	public static function provider(): iterable
@@ -30,7 +32,6 @@ class ServiceLocatorTest extends KernelTestCase
 	public function testServiceMatched(EnumServiceType $serviceType, string $entity): void
 	{
 		$s = self::$locator->getService($serviceType, $entity);
-		//echo PHP_EOL . $s . PHP_EOL;
 		self::assertNotEmpty($s);
 	}
 }

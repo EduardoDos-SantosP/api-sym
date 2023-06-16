@@ -45,7 +45,6 @@ class UsuarioController extends EntityController implements ISearcherController
 	}
 	
 	public function byId(
-		#[EntityArgProvider(classToDeserialize: Usuario::class)]
 		Model $model
 	): JsonResponse {
 		return parent::byId($model);

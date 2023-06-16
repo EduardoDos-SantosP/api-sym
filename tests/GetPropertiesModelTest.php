@@ -20,9 +20,6 @@ class GetPropertiesModelTest extends TestCase
 	public function test(string $entity): void
 	{
 		$p = $entity::getProperties();
-		/*echo PHP_EOL;
-		dump($p);
-		echo PHP_EOL;*/
 		self::assertNotEmpty($p);
 	}
 }

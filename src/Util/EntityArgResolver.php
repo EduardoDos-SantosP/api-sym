@@ -11,17 +11,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use function Symfony\Component\String\b;
 
 class EntityArgResolver implements ArgumentValueResolverInterface
 {
-	private string $controller;
 	private array $requestBody;
 	
 	public function __construct(
 		private readonly SerializerInterface $serializer,
 		private readonly ContainerInterface $container,
+		private readonly RouterInterface $router
 	) {}
 	
 	public function supports(Request $request, ArgumentMetadata $argument): bool
@@ -36,7 +37,7 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 		
 		if ($class === Model::class) {
 			/** @var EntityController $controller */
-			$controller = $this->getController($request, $class);
+			$controller = $this->getController($request);
 			$class = $controller::getModelName();
 		}
 		
@@ -47,12 +48,14 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 		};
 	}
 	
-	private function getController(Request $request, string $class): string
+	private function getController(Request $request): string
 	{
-		$c = $this->controller ??= $class
-			? b($class)->replace('\\Entity\\', '\\Controller\\')->append('Controller')
-			: b($request->get('_controller'))->before('::');
-		return $c;
+		/** @var Route $route */
+		$route = collect($this->router->getRouteCollection())
+			->first(fn(Route $r) => $r->getPath() === $request->getPathInfo());
+		
+		[$controller] = explode('::', $route->getDefault('_controller'));
+		return $controller;
 	}
 	
 	private function deserialize(Request $request, string $class): Model
@@ -63,7 +66,7 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 	private function query(Request $request, string $class): ?Model
 	{
 		/** @var EntityController $controller */
-		$controller = $this->container->get($this->getController($request, $class));
+		$controller = $this->container->get($this->getController($request));
 		
 		$this->requestBody = json_decode($request->getContent(), true);
 		return $controller->getBo()->byId($this->requestBody['id'] ?? 0);

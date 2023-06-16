@@ -23,6 +23,7 @@ abstract class AbstractCrudTest extends WebTestCase
 		parent::setUpBeforeClass();
 		self::$client = self::createClient();
 		self::$publicData[static::class] = (object)[];
+		dump(static::class);
 	}
 	
 	protected static function data(): object
