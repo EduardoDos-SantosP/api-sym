@@ -7,23 +7,6 @@ use function Symfony\Component\String\b;
 
 class ApiTest extends AbstractCrudTest
 {
-	/*public function testAuthentication()
-	{
-		$client = static::createClient();
-		$client->request('POST', 'contabil/all?authenticate=1');
-		$this->assertNotEquals(200, $client->getResponse()->getStatusCode());
-	}
-	
-	public function testApi()
-	{
-		$client = static::createClient();
-		$client->request('POST', 'contabil/all');
-		
-		$response = $client->getResponse();
-		
-		$this->assertJson($response->getContent());
-		$this->assertEquals(200, $response->getStatusCode());
-	}*/
 	private function getEntityUri(): string
 	{
 		return '/' . b(self::$currentEntity)->afterLast('\\')->lower();
@@ -50,7 +33,6 @@ class ApiTest extends AbstractCrudTest
 		$modelClass = self::$currentEntity;
 		foreach ($modelClass::getProperties() as $prop) {
 			if (!$prop->setter) continue;
-			
 			$testValue = match ($prop->type) {
 				'int', 'float' => 10,
 				'string' => 'Valor teste para ' . $prop->property,
@@ -61,14 +43,12 @@ class ApiTest extends AbstractCrudTest
 			if ($testValue !== null)
 				$model[$prop->property] = $testValue;
 		}
-		
 		$route = $this->getEntityUri() . '/new';
 		self::$client->request('POST', $route, content: json_encode($model));
 		
 		$response = self::$client->getResponse();
 		$json = $response->getContent();
 		self::assertJson($json);
-		
 		$model = json_decode($json);
 		
 		self::assertGreaterThan(0, $model->id);

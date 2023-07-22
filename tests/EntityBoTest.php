@@ -37,10 +37,8 @@ class EntityBoTest extends AbstractCrudTest
 	{
 		$model = new (static::$currentEntity);
 		static::assertInstanceOf(Model::class, $model);
-		
 		foreach ($model::getProperties() as $prop) {
 			if (!$prop->setter) continue;
-			
 			$testValue = match ($prop->type) {
 				'int', 'float' => 10,
 				'string' => 'Valor teste para ' . $prop->property,
@@ -48,27 +46,21 @@ class EntityBoTest extends AbstractCrudTest
 				'array' => [],
 				default => null
 			};
-			
 			try {
 				[$model, $prop->setter]($testValue);
 			} catch (TypeError) {
 			}
 		}
 		$this->bo->store($model);
-		
 		static::assertGreaterThan(0, $model->getId());
-		
 		foreach ($model::getProperties() as $prop) {
 			if ($prop->type === 'string')
 				[$model, $prop->setter]([$model, $prop->getter]() . ' Alterado');
 			else if (in_array($prop->type, ['int', 'float']))
 				[$model, $prop->setter]([$model, $prop->getter]() + 1);
 		}
-		
 		$this->bo->store($model);
-		
 		static::assertGreaterThan(0, $model->getId());
-		
 		return $model->getId();
 	}
 	
