@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Helper\DateTimeLocal;
 use App\Repository\SessaoRepository;
+use App\Util\DateTimeLocal;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;

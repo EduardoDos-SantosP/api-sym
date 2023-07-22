@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
+use App\Bo\EntityBo;
+use App\Entity\Model;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
-use App\Facade\EntityFacade;
-use App\Helper\Singleton;
 use App\IEntityService;
-use Doctrine\Persistence\ManagerRegistry;
+use App\ServiceLocator\ServiceLocatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -15,28 +16,34 @@ abstract class EntityController extends Controller implements IEntityService
 {
 	use EntityServiceTrait;
 	
-	private static ManagerRegistry $manager;
-	private static ?EntityFacade $facade = null;
+	private readonly EntityBo $bo;
 	
-	public function __construct(ManagerRegistry $manager, SerializerInterface $serializer)
-	{
+	public function __construct(
+		SerializerInterface $serializer,
+		ServiceLocatorInterface $locator
+	) {
 		parent::__construct($serializer);
-		self::$manager = $manager;
+		
+		/** @var EntityBo $bo */
+		$bo = $locator->getServiceInstance(EnumServiceType::Bo, self::getModelName());
+		$this->bo = $bo;
 	}
 	
-	public static function getManager(): ManagerRegistry
+	public function getBo(): EntityBo
 	{
-		return self::$manager;
+		return $this->bo;
 	}
 	
-	protected static function getFacade(): EntityFacade
+	//#[RouteOptions(parameters: ['id'])]
+	public function byId(Model $model): JsonResponse
 	{
-		/** @var EntityFacade $service */
-		$service = Singleton::getInstance(
-			'controller_facade',
-			fn() => self::findByEntity(self::getModelName(), EnumServiceType::Facade, self::$manager)
-		);
-		return $service;
+		return $this->json($model);
+	}
+	
+	public function delete(Model $model): JsonResponse
+	{
+		$this->bo->delete($model);
+		return $this->json($model);
 	}
 	
 	protected function deserialize(string|Request $requestOrJson, ?string $class = null): mixed

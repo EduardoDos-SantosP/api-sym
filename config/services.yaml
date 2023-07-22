@@ -20,10 +20,30 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Annotation/'
+            - '../src/Enum/'
+            - '../src/Util/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\Bo\:
+        resource: '../src/Bo/'
+        factory: [ null, 'createBo' ]
+        public: true
+        tags: [ 'app.bo' ]
+
     App\Controller\RouteAuthenticator:
         arguments:
             $jwtSecret: '%jwt_secret%'
+
+    Symfony\Component\DependencyInjection\ContainerInterface:
+        alias: service_container
+
+    App\Util\EntityArgResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 101 }
+
+    App\ServiceLocator\ServiceLocatorInterface:
+        class: App\ServiceLocator\ServiceLocator
+        public: true
