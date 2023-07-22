@@ -56,6 +56,7 @@ abstract class Repository extends ServiceEntityRepository implements IRepository
 	
 	public function delete(Model $model): void
 	{
+		//TODO: Implementar lógica para evitar busca redundante desse model para a exclusão
 		$model = $this->byId($model->getId());
 		$this->em->remove($model);
 		$this->em->flush($model);

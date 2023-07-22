@@ -6,7 +6,6 @@ use App\Bo\SessaoBo;
 use App\Contract\ISearcherController;
 use App\Entity\Sessao;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,17 +25,6 @@ class SessaoController extends EntityController implements ISearcherController
 		
 		return new Response('Sessão iniciada com sucesso!', Response::HTTP_CREATED);
 	}
-	
-	public function all(): JsonResponse
-	{
-		return $this->json($this->getBo()->all());
-	}
-	
-	/*#[RouteOptions(parameters: ['id'])]
-	public function byId(int $id): JsonResponse
-	{
-		return $this->json($this->getBo()->byId($id));
-	}*/
 	
 	public function close(Request $request): Response
 	{

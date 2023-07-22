@@ -51,6 +51,6 @@ abstract class EntityBo implements IEntityService, IBo, ISearcher, IStorer
 	
 	public function delete(Model $model): void
 	{
-		$this->getRepository()->delete($this->byId($model->getId()));
+		$this->getRepository()->delete($model);
 	}
 }

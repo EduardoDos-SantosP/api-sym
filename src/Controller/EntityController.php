@@ -34,6 +34,11 @@ abstract class EntityController extends Controller implements IEntityService
 		return $this->bo;
 	}
 	
+	public function all(): JsonResponse
+	{
+		return $this->json($this->getBo()->all());
+	}
+	
 	//#[RouteOptions(parameters: ['id'])]
 	public function byId(Model $model): JsonResponse
 	{

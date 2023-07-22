@@ -2,14 +2,11 @@
 
 namespace App\Controller;
 
-use App\Annotation\Routing\EntityArgProvider;
 use App\Annotation\Routing\NotAuthenticate;
 use App\Bo\UsuarioBo;
 use App\Contract\ISearcherController;
-use App\Entity\Model;
 use App\Entity\Sessao;
 use App\Entity\Usuario;
-use App\Enum\EnumArgProviderMode;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,23 +34,5 @@ class UsuarioController extends EntityController implements ISearcherController
 		$response = $authenticator->generateTokenedResponse(new Sessao($usuario));
 		
 		return $response;
-	}
-	
-	public function all(): JsonResponse
-	{
-		return $this->json($this->getBo()->all());
-	}
-	
-	public function byId(
-		Model $model
-	): JsonResponse {
-		return parent::byId($model);
-	}
-	
-	public function delete(
-		#[EntityArgProvider(EnumArgProviderMode::Query, classToDeserialize: Usuario::class)]
-		Model $model
-	): JsonResponse {
-		return parent::delete($model);
 	}
 }
