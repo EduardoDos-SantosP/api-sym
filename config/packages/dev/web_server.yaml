@@ -1,0 +1,3 @@
+web_server:
+  ssl:
+    certificate_file: '%kernel.project_dir%/config/ssl/localhost.pem'
