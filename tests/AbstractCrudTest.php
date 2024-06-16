@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Entity\Contabil;
 use App\Entity\Model;
+use App\Entity\MovimentacaoItem;
 use App\Entity\Usuario;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -35,7 +36,8 @@ abstract class AbstractCrudTest extends WebTestCase
 	{
 		self::$testEntities = [
 			Usuario::class,
-			Contabil::class
+			Contabil::class,
+            MovimentacaoItem::class
 		];
 		self::addInheritedTest();
 	}

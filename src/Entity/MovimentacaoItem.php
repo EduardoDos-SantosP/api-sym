@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\Model;
+use App\Repository\MovimentacaoItemRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 
-#[Entity()]
+#[Entity(MovimentacaoItemRepository::class)]
 class MovimentacaoItem extends Model
 {
     #[Column(type: 'string', length: 127)]
