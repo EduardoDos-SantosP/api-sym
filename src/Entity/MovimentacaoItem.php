@@ -6,6 +6,7 @@ use App\Entity\Model;
 use App\Repository\MovimentacaoItemRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(MovimentacaoItemRepository::class)]
 class MovimentacaoItem extends Model
@@ -18,6 +19,9 @@ class MovimentacaoItem extends Model
 
     #[Column(type: 'float')]
     private float $valor;
+
+    #[ManyToOne(MovimentacaoItem::class)]
+    private Contabil $movimentacao;
 
     public function getNome(): ?string
     {
