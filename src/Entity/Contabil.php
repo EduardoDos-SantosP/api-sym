@@ -3,9 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ContabilRepository;
+use App\Util\DateTimeLocal;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\OneToMany;
 
 #[Entity(ContabilRepository::class)]
 class Contabil extends Model
@@ -22,9 +26,29 @@ class Contabil extends Model
     #[Column(type: 'datetime')]
     private DateTimeInterface $data;
 
+    #[OneToMany(mappedBy: 'movimentacao', targetEntity: MovimentacaoItem::class)]
+    private Collection $items;
+
+    public function __construct(int $id = 0, array $map = null)
+    {
+        parent::__construct($id, $map);
+        $this->data = new DateTimeLocal();
+        $this->items = new ArrayCollection();
+    }
+
     public function getNome(): ?string
     {
         return $this->nome ?? null;
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function setItems(Collection $items): void
+    {
+        $this->items = $items;
     }
 
     public function setNome(string $nome): self

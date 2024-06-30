@@ -14,28 +14,26 @@ use function Symfony\Component\String\b;
 #[NotRouted]
 class ThrowableController extends Controller
 {
-    public function index(Request $request): Response
-    {
-        /** @var $e Throwable */
-        if (!$e = $request->get('exception'))
-            throw new RuntimeException("O recurso 'exception'não foi econtrado!");
-
-        if (is_a($e, NotFoundHttpException::class)) {
-            $matches = b($e->getMessage())->match('"[A-Z]+ ([A-z\:\/\d\.]+)"');
-            if ($matches && ($route = $matches[1]) && !($newRoute = b($route)->lower())->equalsTo(b($route)))
-                return $this->redirect($newRoute);
-        }
-
-        if ($request->headers->get('sec-fetch-mode') !== 'navigate')
-            return $this->json([get_class($e) => $this->uncapsuleObj($e)]);
-
-        dump($e);
-
-        return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
-    }
-
-    public function __invoke(Request $request): Response
-    {
-        return $this->index($request);
-    }
+	public function __invoke(Request $request): Response
+	{
+		return $this->index($request);
+	}
+	
+	public function index(Request $request): Response
+	{
+		/** @var $e Throwable */
+		if (!$e = $request->get('exception'))
+			throw new RuntimeException("O recurso 'exception'não foi econtrado!");
+		
+		if (is_a($e, NotFoundHttpException::class)) {
+			$matches = b($e->getMessage())->match('"[A-Z]+ ([A-z\:\/\d\.]+)"');
+			if ($matches && ($route = $matches[1]) && !($newRoute = b($route)->lower())->equalsTo(b($route)))
+				return $this->redirect($newRoute);
+		}
+		
+		if ($request->headers->get('sec-fetch-mode') !== 'navigate')
+			return $this->json([get_class($e) => $this->uncapsuleObj($e)]);
+		
+		return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
+	}
 }

@@ -23,9 +23,10 @@ class Usuario extends Model
         return $this->nome ?? null;
     }
 
-    public function setNome(string $nome): void
+    public function setNome(string $nome): Usuario
     {
         $this->nome = $nome;
+        return $this;
     }
 
     public function getLogin(): ?string
@@ -33,9 +34,10 @@ class Usuario extends Model
         return $this->login ?? null;
     }
 
-    public function setLogin(string $login): void
+    public function setLogin(string $login): Usuario
     {
         $this->login = $login;
+        return $this;
     }
 
     public function getSenha(): ?string
@@ -43,8 +45,9 @@ class Usuario extends Model
         return $this->senha ?? null;
     }
 
-    public function setSenha(string $senha): void
+    public function setSenha(string $senha): Usuario
     {
         $this->senha = $senha;
+        return $this;
     }
 }

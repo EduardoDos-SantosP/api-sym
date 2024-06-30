@@ -14,49 +14,51 @@ use function Symfony\Component\String\b;
 
 abstract class Repository extends ServiceEntityRepository implements IRepository, IEntityService
 {
-    use EntityServiceTrait;
-
-    private EntityManagerInterface $em;
-
-    public function __construct(ManagerRegistry $registry)
-    {
-        $entity = $this->getEntityFullName();
-        parent::__construct($registry, $entity);
-        $this->em = $this->getEntityManager();
-    }
-
-    private function getEntityFullName(): string
-    {
-        return b(static::class)
-            ->replace('Repository', 'Entity')
-            ->trimSuffix('Entity')
-            ->toString();
-    }
-
-    public function all(): Collection
-    {
-        return collect($this->executeQuery($this->createQueryBuilder('c')));
-    }
-
-    protected function executeQuery(QueryBuilder $queryBuilder): mixed
-    {
-        return $queryBuilder->getQuery()->execute();
-    }
-
-    public function byId(int $id): ?Model
-    {
-        return $this->find($id);
-    }
-
-    public function store(Model $model): void
-    {
-        $this->em->persist($model);
-        $this->em->flush($model);
-    }
-
-    public function delete(Model $model): void
-    {
-        $this->em->remove($model);
-        $this->em->flush($model);
-    }
+	use EntityServiceTrait;
+	
+	private EntityManagerInterface $em;
+	
+	public function __construct(ManagerRegistry $registry)
+	{
+		$entity = $this->getEntityFullName();
+		parent::__construct($registry, $entity);
+		$this->em = $this->getEntityManager();
+	}
+	
+	private function getEntityFullName(): string
+	{
+		return b(static::class)
+			->replace('Repository', 'Entity')
+			->trimSuffix('Entity')
+			->toString();
+	}
+	
+	public function all(): Collection
+	{
+		return collect($this->executeQuery($this->createQueryBuilder('c')));
+	}
+	
+	protected function executeQuery(QueryBuilder $queryBuilder): mixed
+	{
+		return $queryBuilder->getQuery()->execute();
+	}
+	
+	public function byId(int $id): ?Model
+	{
+		return $this->find($id);
+	}
+	
+	public function store(Model $model): void
+	{
+		$this->em->persist($model);
+		$this->em->flush($model);
+	}
+	
+	public function delete(Model $model): void
+	{
+		//TODO: Implementar lógica para evitar busca redundante desse model para a exclusão
+		$model = $this->byId($model->getId());
+		$this->em->remove($model);
+		$this->em->flush($model);
+	}
 }
