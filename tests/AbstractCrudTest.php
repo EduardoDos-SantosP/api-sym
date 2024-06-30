@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Entity\Contabil;
 use App\Entity\Model;
+use App\Entity\MovimentacaoItem;
 use App\Entity\Usuario;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -23,19 +24,29 @@ abstract class AbstractCrudTest extends WebTestCase
 		parent::setUpBeforeClass();
 		self::$client = self::createClient();
 		self::$publicData[static::class] = (object)[];
+        self::bootEntities();
 		dump(static::class);
 	}
-	
-	protected static function data(): object
+
+    protected function setUp(): void
+    {
+        $this->updateCurrentEntity();
+        dump(self::$currentEntity);
+    }
+
+    protected static function data(): object
 	{
 		return self::$publicData[static::class];
 	}
 	
 	private static function bootEntities(): void
 	{
+        if (isset(self::$testEntities) && count(self::$testEntities))
+            return;
 		self::$testEntities = [
 			Usuario::class,
-			Contabil::class
+			Contabil::class,
+            MovimentacaoItem::class
 		];
 		self::addInheritedTest();
 	}
@@ -68,9 +79,6 @@ abstract class AbstractCrudTest extends WebTestCase
 	/** @dataProvider entitiesProvider */
 	public function testCrud(): void
 	{
-		$this->updateCurrentEntity();
-		dump(self::$currentEntity);
-		
 		self::data()->qtd = $this->fetchCountEntities();
 		
 		$id = $this->store();
