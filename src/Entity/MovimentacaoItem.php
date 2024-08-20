@@ -23,6 +23,17 @@ class MovimentacaoItem extends Model
     #[ManyToOne(MovimentacaoItem::class)]
     private Contabil $movimentacao;
 
+    public function getMovimentacao(): Contabil
+    {
+        return $this->movimentacao;
+    }
+
+    public function setMovimentacao(Contabil $movimentacao): self
+    {
+        $this->movimentacao = $movimentacao;
+        return $this;
+    }
+
     public function getNome(): ?string
     {
         return $this->nome ?? null;

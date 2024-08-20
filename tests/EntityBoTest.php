@@ -10,7 +10,7 @@ use TypeError;
 
 class EntityBoTest extends AbstractCrudTest
 {
-	private ?EntityBo $bo = null;
+	protected ?EntityBo $bo = null;
 	
 	public static function getBoInstance(): EntityBo
 	{

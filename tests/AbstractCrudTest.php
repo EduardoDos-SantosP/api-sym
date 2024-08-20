@@ -39,14 +39,13 @@ abstract class AbstractCrudTest extends WebTestCase
 		return self::$publicData[static::class];
 	}
 	
-	private static function bootEntities(): void
+	protected static function bootEntities(): void
 	{
         if (isset(self::$testEntities) && count(self::$testEntities))
             return;
 		self::$testEntities = [
 			Usuario::class,
-			Contabil::class,
-            MovimentacaoItem::class
+			Contabil::class
 		];
 		self::addInheritedTest();
 	}
