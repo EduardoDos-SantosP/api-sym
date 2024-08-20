@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use App\Entity\Model;
 use App\Entity\MovimentacaoItem;
 use TypeError;
@@ -33,7 +33,7 @@ class MovimentacaoItemTest extends EntityBoTest
             } catch (TypeError) {
             }
         }
-        $model->setMovimentacao(new Contabil());
+        $model->setMovimentacao(new Movimentacao());
         $this->bo->store($model);
         static::assertGreaterThan(0, $model->getId());
         foreach ($model::getProperties() as $prop) {

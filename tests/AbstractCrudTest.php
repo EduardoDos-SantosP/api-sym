@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use App\Entity\Model;
 use App\Entity\MovimentacaoItem;
 use App\Entity\Usuario;
@@ -45,7 +45,7 @@ abstract class AbstractCrudTest extends WebTestCase
             return;
 		self::$testEntities = [
 			Usuario::class,
-			Contabil::class
+			Movimentacao::class
 		];
 		self::addInheritedTest();
 	}

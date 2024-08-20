@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\ContabilRepository;
+use App\Repository\MovimentacaoRepository;
 use App\Util\DateTimeLocal;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\OneToMany;
 
-#[Entity(ContabilRepository::class)]
-class Contabil extends Model
+#[Entity(MovimentacaoRepository::class)]
+class Movimentacao extends Model
 {
     #[Column(type: 'string', length: 127)]
     private string $nome;

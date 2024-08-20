@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-class ContabilRepository extends Repository
+class MovimentacaoRepository extends Repository
 {
 
 

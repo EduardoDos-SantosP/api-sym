@@ -2,20 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContabilController extends EntityController
+class MovimentacaoController extends EntityController
 {
 	public function index(): JsonResponse
 	{
-		$conta = new Contabil();
+		$conta = new Movimentacao();
 		$conta->setNome('teste');
 		return $this->json($conta);
 	}
 	
-	public function new(Contabil $contabil): Response
+	public function new(Movimentacao $contabil): Response
 	{
 		$this->getBo()->store($contabil);
 		

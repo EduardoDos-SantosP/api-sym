@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use App\Entity\Model;
 use App\Entity\Usuario;
 use PHPUnit\Framework\TestCase;
@@ -11,7 +11,7 @@ class GetPropertiesModelTest extends TestCase
 {
 	public static function provider(): array
 	{
-		return [[Contabil::class], [Usuario::class]];
+		return [[Movimentacao::class], [Usuario::class]];
 	}
 	
 	/**

@@ -20,15 +20,15 @@ class MovimentacaoItem extends Model
     #[Column(type: 'float')]
     private float $valor;
 
-    #[ManyToOne(MovimentacaoItem::class)]
-    private Contabil $movimentacao;
+    #[ManyToOne(Movimentacao::class)]
+    private Movimentacao $movimentacao;
 
-    public function getMovimentacao(): Contabil
+    public function getMovimentacao(): Movimentacao
     {
         return $this->movimentacao;
     }
 
-    public function setMovimentacao(Contabil $movimentacao): self
+    public function setMovimentacao(Movimentacao $movimentacao): self
     {
         $this->movimentacao = $movimentacao;
         return $this;
