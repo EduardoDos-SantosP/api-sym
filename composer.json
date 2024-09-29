@@ -20,6 +20,7 @@
 			"Composer\\Config::disableProcessTimeout",
 			"symfony server:start"
 		],
+		"start": "symfony server:start --dir=C:\\Users\\edudu\\OneDrive\\Documentos\\Workspace\\api-sym",
 		"test": "php bin/phpunit"
 	},
 	"require": {

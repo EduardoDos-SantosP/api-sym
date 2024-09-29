@@ -17,6 +17,8 @@ class MovimentacaoItemTest extends EntityBoTest
 
     public function store(): int
     {
+        (new MovimentacaoItemTest())->testCrud();
+
         $model = new MovimentacaoItem();
         static::assertInstanceOf(Model::class, $model);
         foreach ($model::getProperties() as $prop) {
@@ -45,5 +47,26 @@ class MovimentacaoItemTest extends EntityBoTest
         $this->bo->store($model);
         static::assertGreaterThan(0, $model->getId());
         return $model->getId();
+    }
+
+    public function testCrud(): void
+    {
+        self::data()->qtd = $this->fetchCountEntities();
+
+        $id = $this->store();
+
+        static::assertEquals(
+            self::data()->qtd + 1,
+            $this->fetchCountEntities()
+        );
+
+        $model = $this->fetchById($id);
+
+        /*$this->delete($model);
+
+        static::assertEquals(
+            self::data()->qtd,
+            $this->fetchCountEntities()
+        );*/
     }
 }

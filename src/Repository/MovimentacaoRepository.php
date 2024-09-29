@@ -2,10 +2,22 @@
 
 namespace App\Repository;
 
+use App\Entity\Model;
+use App\Entity\Movimentacao;
+use Illuminate\Support\Collection;
+
 class MovimentacaoRepository extends Repository
 {
-
-
+    public function all(): Collection
+    {
+        return parent::all()->map(function (Movimentacao $movimentacao) {
+            $movimentacao = $this->getEntityManager()
+                ->find(self::getModelName(), $movimentacao->getId());
+            $movimentacao->setValor($movimentacao->getItems()->count());
+            $movimentacao->setItems($movimentacao->getItems());
+            return $movimentacao;
+        });
+    }
     /*public function add(Contabil $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
