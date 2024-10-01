@@ -10,17 +10,17 @@ home_about:
     path: /home/about
     controller: 'App\Controller\HomeController::about'
     condition: 'service("authenticator").authenticate(request)'
-movimentacao_index:
-    path: /movimentacao/index
-    controller: 'App\Controller\MovimentacaoController::index'
+movimentacao_upsertitem:
+    path: '/movimentacao/items/save/{id}'
+    controller: 'App\Controller\MovimentacaoController::upsertItem'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_deleteitem:
+    path: /movimentacao/delete/item
+    controller: 'App\Controller\MovimentacaoController::deleteItem'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_new:
     path: /movimentacao/new
     controller: 'App\Controller\MovimentacaoController::new'
-    condition: 'service("authenticator").authenticate(request)'
-movimentacao_upsertitem:
-    path: '/movimentacao/items/{id}'
-    controller: 'App\Controller\MovimentacaoController::upsertItem'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_all:
     path: /movimentacao/all
@@ -42,6 +42,10 @@ sessao_close:
     path: /sessao/close
     controller: 'App\Controller\SessaoController::close'
     condition: 'service("authenticator").authenticate(request)'
+sessao_new:
+    path: /sessao/new
+    controller: 'App\Controller\SessaoController::new'
+    condition: 'service("authenticator").authenticate(request)'
 sessao_all:
     path: /sessao/all
     controller: 'App\Controller\SessaoController::all'
@@ -54,12 +58,16 @@ sessao_delete:
     path: /sessao/delete
     controller: 'App\Controller\SessaoController::delete'
     condition: 'service("authenticator").authenticate(request)'
-usuario_new:
-    path: /usuario/new
-    controller: 'App\Controller\UsuarioController::new'
+usuario_store:
+    path: /usuario/store
+    controller: 'App\Controller\UsuarioController::store'
 usuario_login:
     path: /usuario/login
     controller: 'App\Controller\UsuarioController::login'
+usuario_new:
+    path: /usuario/new
+    controller: 'App\Controller\UsuarioController::new'
+    condition: 'service("authenticator").authenticate(request)'
 usuario_all:
     path: /usuario/all
     controller: 'App\Controller\UsuarioController::all'

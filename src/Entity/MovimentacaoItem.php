@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Model;
 use App\Repository\MovimentacaoItemRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -20,7 +19,7 @@ class MovimentacaoItem extends Model
     #[Column(type: 'float')]
     private float $valor;
 
-    #[ManyToOne(Movimentacao::class)]
+    #[ManyToOne(Movimentacao::class, inversedBy: 'items')]
     private Movimentacao $movimentacao;
 
     public function getMovimentacao(): Movimentacao

@@ -4,19 +4,21 @@ namespace App\Repository;
 
 use App\Entity\Model;
 use App\Entity\Movimentacao;
-use Illuminate\Support\Collection;
 
 class MovimentacaoRepository extends Repository
 {
-    public function all(): Collection
+    public function byId(int $id): ?Model
     {
-        return parent::all()->map(function (Movimentacao $movimentacao) {
-            $movimentacao = $this->getEntityManager()
-                ->find(self::getModelName(), $movimentacao->getId());
-            $movimentacao->setValor($movimentacao->getItems()->count());
-            $movimentacao->setItems($movimentacao->getItems());
-            return $movimentacao;
-        });
+        /** @var Movimentacao $m */
+        $m = $this->executeQuery(
+            $this->createQueryBuilder('m')
+                ->leftJoin('m.items', 'i')
+                ->addSelect('i')
+                ->where('m.id = :id')
+                ->setParameter('id', $id)
+        )[0] ?? null;
+        $m->setValor($m->getItems()->count());
+        return $m;
     }
     /*public function add(Contabil $entity, bool $flush = false): void
     {

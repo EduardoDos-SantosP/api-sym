@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Annotation\Routing\NotAuthenticate;
 use App\Bo\UsuarioBo;
 use App\Contract\ISearcherController;
+use App\Entity\Model;
 use App\Entity\Sessao;
-use App\Entity\Usuario;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UsuarioController extends EntityController implements ISearcherController
 {
 	#[NotAuthenticate]
-	public function new(?Usuario $usuario): JsonResponse
+	public function store(Model $usuario): JsonResponse
 	{
 		$this->getBo()->store($usuario);
 		return $this->json($usuario);

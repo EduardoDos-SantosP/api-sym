@@ -26,7 +26,7 @@ class Movimentacao extends Model
     #[Column(type: 'datetime')]
     private DateTimeInterface $data;
 
-    #[OneToMany(mappedBy: 'movimentacao', targetEntity: MovimentacaoItem::class)]
+    #[OneToMany(mappedBy: 'movimentacao', targetEntity: MovimentacaoItem::class, fetch: 'EAGER')]
     private Collection $items;
 
     public function __construct(int $id = 0, array $map = null)

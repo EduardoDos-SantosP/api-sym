@@ -2,31 +2,19 @@
 
 namespace App\Controller;
 
+use App\Annotation\Routing\EntityArgProvider;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\MovimentacaoItemBo;
 use App\Entity\Movimentacao;
 use App\Entity\MovimentacaoItem;
+use App\Enum\EnumArgProviderMode;
 use App\Enum\EnumServiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class MovimentacaoController extends EntityController
 {
-    public function index(): JsonResponse
-    {
-        $conta = new Movimentacao();
-        $conta->setNome('teste');
-        return $this->json($conta);
-    }
-
-    public function new(Movimentacao $contabil): Response
-    {
-        $this->getBo()->store($contabil);
-
-        return $this->json($contabil);
-    }
-
-    #[RouteOptions(path: '/movimentacao/items', parameters: ['id'])]
+    #[RouteOptions(path: '/movimentacao/items/save', parameters: ['id'])]
     public function upsertItem(MovimentacaoItem $item, int $id): Response
     {
         /** @var Movimentacao $movimentacao */
@@ -44,6 +32,20 @@ class MovimentacaoController extends EntityController
             MovimentacaoItem::class
         );
         $bo->store($item);
+        return $this->json($item);
+    }
+
+    #[RouteOptions(path: '/movimentacao/delete/item')]
+    public function deleteItem(
+        #[EntityArgProvider(EnumArgProviderMode::Query)]
+        MovimentacaoItem $item
+    ): JsonResponse
+    {
+        $bo = $this->serviceLocator->getServiceInstance(
+            EnumServiceType::Bo,
+            MovimentacaoItem::class
+        );
+        $bo->delete($item);
         return $this->json($item);
     }
 }

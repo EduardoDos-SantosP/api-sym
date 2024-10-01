@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\EntityBo;
 use App\Entity\Model;
+use App\Entity\Movimentacao;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
 use App\IEntityService;
@@ -37,6 +38,12 @@ abstract class EntityController extends Controller implements IEntityService
 	{
 		return $this->bo;
 	}
+
+    public function new(Movimentacao $model): JsonResponse
+    {
+        $this->getBo()->store($model);
+        return $this->json($model);
+    }
 
 	public function all(): JsonResponse
 	{
