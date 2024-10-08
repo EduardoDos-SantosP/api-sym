@@ -11,7 +11,7 @@ home_about:
     controller: 'App\Controller\HomeController::about'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_upsertitem:
-    path: '/movimentacao/items/save/{id}'
+    path: '/movimentacao/{id}/items/save'
     controller: 'App\Controller\MovimentacaoController::upsertItem'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_deleteitem:

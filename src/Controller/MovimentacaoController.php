@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MovimentacaoController extends EntityController
 {
-    #[RouteOptions(path: '/movimentacao/items/save', parameters: ['id'])]
+    #[RouteOptions(path: '/movimentacao/{id}/items/save', parameters: ['id'])]
     public function upsertItem(MovimentacaoItem $item, int $id): Response
     {
         /** @var Movimentacao $movimentacao */
