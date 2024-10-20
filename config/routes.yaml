@@ -18,6 +18,10 @@ movimentacao_deleteitem:
     path: /movimentacao/delete/item
     controller: 'App\Controller\MovimentacaoController::deleteItem'
     condition: 'service("authenticator").authenticate(request)'
+movimentacao_getitem:
+    path: '/movimentacao/items/{id}'
+    controller: 'App\Controller\MovimentacaoController::getItem'
+    condition: 'service("authenticator").authenticate(request)'
 movimentacao_new:
     path: /movimentacao/new
     controller: 'App\Controller\MovimentacaoController::new'

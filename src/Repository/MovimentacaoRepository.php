@@ -17,7 +17,6 @@ class MovimentacaoRepository extends Repository
                 ->where('m.id = :id')
                 ->setParameter('id', $id)
         )[0] ?? null;
-        $m->setValor($m->getItems()->count());
         return $m;
     }
     /*public function add(Contabil $entity, bool $flush = false): void

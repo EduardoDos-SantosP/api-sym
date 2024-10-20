@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class MovimentacaoController extends EntityController
 {
     #[RouteOptions(path: '/movimentacao/{id}/items/save', parameters: ['id'])]
-    public function upsertItem(MovimentacaoItem $item, int $id): Response
+    public function upsertItem(MovimentacaoItem $item, int $id): JsonResponse
     {
         /** @var Movimentacao $movimentacao */
         $movimentacao = $this->getBo()->byId($id);
@@ -46,6 +46,17 @@ class MovimentacaoController extends EntityController
             MovimentacaoItem::class
         );
         $bo->delete($item);
+        return $this->json($item);
+    }
+
+    #[RouteOptions(path: '/movimentacao/items/{id}', parameters: ['id'])]
+    public function getItem(int $id): JsonResponse
+    {
+        $bo = $this->serviceLocator->getServiceInstance(
+            EnumServiceType::Bo,
+            MovimentacaoItem::class
+        );
+        $item = $bo->byId($id);
         return $this->json($item);
     }
 }
