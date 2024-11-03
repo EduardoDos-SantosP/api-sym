@@ -2,26 +2,6 @@ when@dev:
     app_loadroutes:
         path: /
         controller: 'App\Controller\AppController::loadRoutes'
-contabil_index:
-    path: /contabil/index
-    controller: 'App\Controller\ContabilController::index'
-    condition: 'service("authenticator").authenticate(request)'
-contabil_all:
-    path: /contabil/all
-    controller: 'App\Controller\ContabilController::all'
-    condition: 'service("authenticator").authenticate(request)'
-contabil_new:
-    path: /contabil/new
-    controller: 'App\Controller\ContabilController::new'
-    condition: 'service("authenticator").authenticate(request)'
-contabil_byid:
-    path: /contabil/byid
-    controller: 'App\Controller\ContabilController::byId'
-    condition: 'service("authenticator").authenticate(request)'
-contabil_delete:
-    path: /contabil/delete
-    controller: 'App\Controller\ContabilController::delete'
-    condition: 'service("authenticator").authenticate(request)'
 home_index:
     path: /home/index
     controller: 'App\Controller\HomeController::index'
@@ -30,38 +10,74 @@ home_about:
     path: /home/about
     controller: 'App\Controller\HomeController::about'
     condition: 'service("authenticator").authenticate(request)'
+movimentacao_upsertitem:
+    path: '/movimentacao/{id}/items/save'
+    controller: 'App\Controller\MovimentacaoController::upsertItem'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_deleteitem:
+    path: /movimentacao/delete/item
+    controller: 'App\Controller\MovimentacaoController::deleteItem'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_getitem:
+    path: '/movimentacao/items/{id}'
+    controller: 'App\Controller\MovimentacaoController::getItem'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_new:
+    path: /movimentacao/new
+    controller: 'App\Controller\MovimentacaoController::new'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_all:
+    path: /movimentacao/all
+    controller: 'App\Controller\MovimentacaoController::all'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_byid:
+    path: '/movimentacao/byid/{id}'
+    controller: 'App\Controller\MovimentacaoController::byId'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_delete:
+    path: /movimentacao/delete
+    controller: 'App\Controller\MovimentacaoController::delete'
+    condition: 'service("authenticator").authenticate(request)'
 sessao_open:
     path: /sessao/open
     controller: 'App\Controller\SessaoController::open'
-    condition: 'service("authenticator").authenticate(request)'
-sessao_all:
-    path: /sessao/all
-    controller: 'App\Controller\SessaoController::all'
     condition: 'service("authenticator").authenticate(request)'
 sessao_close:
     path: /sessao/close
     controller: 'App\Controller\SessaoController::close'
     condition: 'service("authenticator").authenticate(request)'
+sessao_new:
+    path: /sessao/new
+    controller: 'App\Controller\SessaoController::new'
+    condition: 'service("authenticator").authenticate(request)'
+sessao_all:
+    path: /sessao/all
+    controller: 'App\Controller\SessaoController::all'
+    condition: 'service("authenticator").authenticate(request)'
 sessao_byid:
-    path: /sessao/byid
+    path: '/sessao/byid/{id}'
     controller: 'App\Controller\SessaoController::byId'
     condition: 'service("authenticator").authenticate(request)'
 sessao_delete:
     path: /sessao/delete
     controller: 'App\Controller\SessaoController::delete'
     condition: 'service("authenticator").authenticate(request)'
-usuario_new:
-    path: /usuario/new
-    controller: 'App\Controller\UsuarioController::new'
+usuario_store:
+    path: /usuario/store
+    controller: 'App\Controller\UsuarioController::store'
 usuario_login:
     path: /usuario/login
     controller: 'App\Controller\UsuarioController::login'
+usuario_new:
+    path: /usuario/new
+    controller: 'App\Controller\UsuarioController::new'
+    condition: 'service("authenticator").authenticate(request)'
 usuario_all:
     path: /usuario/all
     controller: 'App\Controller\UsuarioController::all'
     condition: 'service("authenticator").authenticate(request)'
 usuario_byid:
-    path: /usuario/byid
+    path: '/usuario/byid/{id}'
     controller: 'App\Controller\UsuarioController::byId'
     condition: 'service("authenticator").authenticate(request)'
 usuario_delete:

@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use App\Entity\Usuario;
 use App\Enum\EnumServiceType;
 use App\ServiceLocator\ServiceLocatorInterface;
@@ -24,7 +24,7 @@ class ServiceLocatorTest extends KernelTestCase
 	public static function provider(): iterable
 	{
 		foreach (EnumServiceType::cases() as $case)
-			foreach ([Usuario::class, Contabil::class] as $entity)
+			foreach ([Usuario::class, Movimentacao::class] as $entity)
 				yield [$case, $entity];
 	}
 	

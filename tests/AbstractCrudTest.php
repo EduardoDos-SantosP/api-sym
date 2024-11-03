@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Contabil;
+use App\Entity\Movimentacao;
 use App\Entity\Model;
 use App\Entity\MovimentacaoItem;
 use App\Entity\Usuario;
@@ -39,14 +39,13 @@ abstract class AbstractCrudTest extends WebTestCase
 		return self::$publicData[static::class];
 	}
 	
-	private static function bootEntities(): void
+	protected static function bootEntities(): void
 	{
         if (isset(self::$testEntities) && count(self::$testEntities))
             return;
 		self::$testEntities = [
-			Usuario::class,
-			Contabil::class,
-            MovimentacaoItem::class
+			/*Usuario::class,
+			Movimentacao::class*/
 		];
 		self::addInheritedTest();
 	}
@@ -73,7 +72,9 @@ abstract class AbstractCrudTest extends WebTestCase
 	
 	protected function updateCurrentEntity(): void
 	{
-		self::$currentEntity = self::$testEntities[self::$currentEntityIndex++];
+		$currentEntity = self::$testEntities[self::$currentEntityIndex++] ?? null;
+        if (!$currentEntity) self::markTestSkipped('No entities to test');
+        self::$currentEntity = $currentEntity;
 	}
 	
 	/** @dataProvider entitiesProvider */

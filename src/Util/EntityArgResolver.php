@@ -50,11 +50,8 @@ class EntityArgResolver implements ArgumentValueResolverInterface
 	
 	private function getController(Request $request): string
 	{
-		/** @var Route $route */
-		$route = collect($this->router->getRouteCollection())
-			->first(fn(Route $r) => $r->getPath() === $request->getPathInfo());
-		
-		[$controller] = explode('::', $route->getDefault('_controller'));
+		$route = $this->router->match($request);
+		[$controller] = explode('::', $route['_controller']);
 		return $controller;
 	}
 	

@@ -9,5 +9,5 @@ interface ISearcherController
 {
 	public function all(): JsonResponse;
 	
-	public function byId(Model $model): JsonResponse;
+	public function byId(int $id): JsonResponse;
 }

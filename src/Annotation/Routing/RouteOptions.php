@@ -23,6 +23,9 @@ class RouteOptions
 	
 	public function toUri(): string
 	{
-		return collect($this->parameters)->map(fn($p) => '/{' . $p . '}')->join('');
+		return collect($this->parameters)
+            ->filter(fn($p) => !$this->path || !str_contains($this->path, "{{$p}}"))
+            ->map(fn($p) => '/{' . $p . '}')
+            ->join('');
 	}
 }

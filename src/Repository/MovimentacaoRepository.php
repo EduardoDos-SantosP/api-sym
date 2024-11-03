@@ -2,10 +2,23 @@
 
 namespace App\Repository;
 
-class ContabilRepository extends Repository
+use App\Entity\Model;
+use App\Entity\Movimentacao;
+
+class MovimentacaoRepository extends Repository
 {
-
-
+    public function byId(int $id): ?Model
+    {
+        /** @var Movimentacao $m */
+        $m = $this->executeQuery(
+            $this->createQueryBuilder('m')
+                ->leftJoin('m.items', 'i')
+                ->addSelect('i')
+                ->where('m.id = :id')
+                ->setParameter('id', $id)
+        )[0] ?? null;
+        return $m;
+    }
     /*public function add(Contabil $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
