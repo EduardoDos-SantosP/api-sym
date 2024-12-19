@@ -16,7 +16,7 @@ class UsuarioPermissoes extends ArvorePermissao
 	
 	public function getUsuario(): ?Usuario
 	{
-		return $this->usuario;
+		return $this->usuario ?? null;
 	}
 	
 	public function setUsuario(Usuario $usuario): self

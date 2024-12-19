@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Annotation\Routing\Permission;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\EntityBo;
 use App\Entity\Model;
@@ -45,6 +46,7 @@ abstract class EntityController extends Controller implements IEntityService
         return $this->json($model);
     }
 
+    #[Permission('admin')]
 	public function all(): JsonResponse
 	{
 		return $this->json($this->getBo()->all());
