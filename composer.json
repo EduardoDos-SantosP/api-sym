@@ -33,6 +33,7 @@
 		"doctrine/orm": "^2.12",
 		"firebase/php-jwt": "^6.3",
 		"illuminate/collections": "^9.19",
+		"nelmio/cors-bundle": "^2.5",
 		"phpdocumentor/reflection-docblock": "^5.3",
 		"phpstan/phpdoc-parser": "^1.7",
 		"symfony/console": "6.1.*",
