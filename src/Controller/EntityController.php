@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Annotation\Routing\Permission;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\EntityBo;
-use App\Entity\Model;
 use App\Entity\Movimentacao;
 use App\EntityServiceTrait;
 use App\Enum\EnumServiceType;
@@ -60,8 +59,10 @@ abstract class EntityController extends Controller implements IEntityService
 		return $this->json($model);
 	}
 
-	public function delete(Model $model): JsonResponse
+    #[RouteOptions(parameters: ['id'])]
+	public function delete(int $id): JsonResponse
 	{
+        $model = $this->getBo()->byId($id);
 		$this->bo->delete($model);
 		return $this->json($model);
 	}
