@@ -10,10 +10,6 @@ home_about:
     path: /home/about
     controller: 'App\Controller\HomeController::about'
     condition: 'service("authenticator").authenticate(request)'
-movimentacao_all:
-    path: /movimentacao/all
-    controller: 'App\Controller\MovimentacaoController::all'
-    condition: 'service("authenticator").authenticate(request)'
 movimentacao_upsertitem:
     path: '/movimentacao/{id}/items/save'
     controller: 'App\Controller\MovimentacaoController::upsertItem'
@@ -26,16 +22,24 @@ movimentacao_getitem:
     path: '/movimentacao/items/{id}'
     controller: 'App\Controller\MovimentacaoController::getItem'
     condition: 'service("authenticator").authenticate(request)'
+movimentacao_del:
+    path: /movimentacao/del
+    controller: 'App\Controller\MovimentacaoController::del'
+    condition: 'service("authenticator").authenticate(request)'
 movimentacao_new:
     path: /movimentacao/new
     controller: 'App\Controller\MovimentacaoController::new'
+    condition: 'service("authenticator").authenticate(request)'
+movimentacao_all:
+    path: /movimentacao/all
+    controller: 'App\Controller\MovimentacaoController::all'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_byid:
     path: '/movimentacao/byid/{id}'
     controller: 'App\Controller\MovimentacaoController::byId'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_delete:
-    path: /movimentacao/delete
+    path: '/movimentacao/delete/{id}'
     controller: 'App\Controller\MovimentacaoController::delete'
     condition: 'service("authenticator").authenticate(request)'
 sessao_open:
@@ -59,7 +63,7 @@ sessao_byid:
     controller: 'App\Controller\SessaoController::byId'
     condition: 'service("authenticator").authenticate(request)'
 sessao_delete:
-    path: /sessao/delete
+    path: '/sessao/delete/{id}'
     controller: 'App\Controller\SessaoController::delete'
     condition: 'service("authenticator").authenticate(request)'
 usuario_store:
@@ -81,6 +85,6 @@ usuario_byid:
     controller: 'App\Controller\UsuarioController::byId'
     condition: 'service("authenticator").authenticate(request)'
 usuario_delete:
-    path: /usuario/delete
+    path: '/usuario/delete/{id}'
     controller: 'App\Controller\UsuarioController::delete'
     condition: 'service("authenticator").authenticate(request)'

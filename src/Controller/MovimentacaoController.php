@@ -3,15 +3,16 @@
 namespace App\Controller;
 
 use App\Annotation\Routing\EntityArgProvider;
-use App\Annotation\Routing\Permission;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\MovimentacaoItemBo;
 use App\Entity\Movimentacao;
 use App\Entity\MovimentacaoItem;
 use App\Enum\EnumArgProviderMode;
 use App\Enum\EnumServiceType;
+use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 
 class MovimentacaoController extends EntityController
 {
