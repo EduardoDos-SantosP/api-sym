@@ -32,7 +32,16 @@ class ThrowableController extends Controller
 		}
 		
 		if ($request->headers->get('sec-fetch-mode') !== 'navigate')
-			return $this->json([get_class($e) => $this->uncapsuleObj($e)]);
+            /*return new Response(
+                (new SerializerErrorRenderer(
+                    new Serializer(),
+                    'application/json'
+                ))->render($e)->getAsString()
+            );*/
+			return $this->json([
+                'name' => get_class($e),
+                'error' => $this->uncapsuleObj($e)
+            ]);
 		
 		return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
 	}

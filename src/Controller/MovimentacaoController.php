@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Annotation\Routing\EntityArgProvider;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\MovimentacaoItemBo;
-use App\Entity\Model;
 use App\Entity\Movimentacao;
 use App\Entity\MovimentacaoItem;
 use App\Enum\EnumArgProviderMode;
@@ -67,17 +66,5 @@ class MovimentacaoController extends EntityController
         );
         $item = $bo->byId($id);
         return $this->json($item);
-    }
-
-//    #[RouteOptions(path: '/movimentacao/del/{id}', parameters: ['id'])]
-    public function del(
-        #[ValueResolver(EntityValueResolver::class, disabled: true)]
-        Model $a
-    ): JsonResponse
-    {
-        return $this->json($this->f());
-    }
-    private function f(): Model {
-        return new Movimentacao();
     }
 }

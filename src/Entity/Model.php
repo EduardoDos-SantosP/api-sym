@@ -69,6 +69,11 @@ abstract class Model implements JsonSerializable
         return $this->id ?? null;
     }
 
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
     public function jsonSerialize(): mixed
     {
         return collect((new ReflectionClass($this))->getMethods(ReflectionMethod::IS_PUBLIC))
