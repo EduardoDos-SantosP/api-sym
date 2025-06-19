@@ -26,8 +26,7 @@ abstract class EntityController extends Controller implements IEntityService
     public function __construct(
         SerializerInterface     $serializer,
         ServiceLocatorInterface $locator
-    )
-    {
+    ) {
         parent::__construct($serializer);
         $this->serviceLocator = $locator;
 
@@ -66,7 +65,7 @@ abstract class EntityController extends Controller implements IEntityService
     public function delete(int $id): JsonResponse
     {
         $model = $this->getBo()->byId($id);
-        $this->bo->delete($model);
+        if ($model) $this->bo->delete($model);
         return $this->json($model);
     }
 
@@ -80,7 +79,12 @@ abstract class EntityController extends Controller implements IEntityService
         $class ??= self::getModelName();
         $body = json_decode($request->getContent(), associative: true);
 
-        $queried = $this->getBo()->byId($body['id']);
+        /** @var EntityBo $bo */
+        $bo = $this->serviceLocator->getServiceInstance(
+            EnumServiceType::Bo,
+            $class
+        );
+        $queried = isset($body['id']) ? $bo->byId($body['id']) : null;
         $deserialized = $this->deserialize($request, $class);
         if (!$queried) return $deserialized;
 

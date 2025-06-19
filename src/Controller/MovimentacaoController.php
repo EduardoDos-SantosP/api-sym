@@ -9,6 +9,7 @@ use App\Entity\Movimentacao;
 use App\Entity\MovimentacaoItem;
 use App\Enum\EnumServiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MovimentacaoController extends EntityController
@@ -20,7 +21,7 @@ class MovimentacaoController extends EntityController
     }
 
     #[RouteOptions(path: '/movimentacao/{id}/items/save', parameters: ['id'])]
-    public function upsertItem(MovimentacaoItem $item, int $id): JsonResponse
+    public function upsertItem(Request $item, int $id): JsonResponse
     {
         /** @var Movimentacao $movimentacao */
         $movimentacao = $this->getBo()->byId($id);
@@ -29,18 +30,21 @@ class MovimentacaoController extends EntityController
                 ['message' => "Movimentação não encontrada para o id '$id'"],
                 Response::HTTP_NOT_FOUND
             );
-        $item->setMovimentacao($movimentacao);
+
+        /** @var MovimentacaoItem $movItem */
+        $movItem = $this->merge($item, MovimentacaoItem::class);
+        $movItem->setMovimentacao($movimentacao);
 
         /** @var MovimentacaoItemBo $bo */
         $bo = $this->serviceLocator->getServiceInstance(
             EnumServiceType::Bo,
             MovimentacaoItem::class
         );
-        $bo->store($item);
-        return $this->json($item);
+        $bo->store($movItem);
+        return $this->json($movItem);
     }
 
-    #[RouteOptions(path: '/movimentacao/delete/{id}')]
+    #[RouteOptions(parameters: ['id'])]
     public function deleteItem(int $id): JsonResponse
     {
         /** @var MovimentacaoItemBo $bo */
@@ -49,7 +53,7 @@ class MovimentacaoController extends EntityController
             MovimentacaoItem::class
         );
         $item = $bo->byId($id);
-        $bo->delete($item);
+        if ($item) $bo->delete($item);
         return $this->json($item);
     }
 
