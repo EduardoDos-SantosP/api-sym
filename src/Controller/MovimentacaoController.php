@@ -2,17 +2,14 @@
 
 namespace App\Controller;
 
-use App\Annotation\Routing\EntityArgProvider;
+use App\Annotation\Routing\Permission;
 use App\Annotation\Routing\RouteOptions;
 use App\Bo\MovimentacaoItemBo;
 use App\Entity\Movimentacao;
 use App\Entity\MovimentacaoItem;
-use App\Enum\EnumArgProviderMode;
 use App\Enum\EnumServiceType;
-use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 
 class MovimentacaoController extends EntityController
 {
@@ -43,28 +40,24 @@ class MovimentacaoController extends EntityController
         return $this->json($item);
     }
 
-    #[RouteOptions(path: '/movimentacao/delete/item')]
-    public function deleteItem(
-        #[EntityArgProvider(EnumArgProviderMode::Query)]
-        MovimentacaoItem $item
-    ): JsonResponse
+    #[RouteOptions(path: '/movimentacao/delete/{id}')]
+    public function deleteItem(int $id): JsonResponse
     {
-        $bo = $this->serviceLocator->getServiceInstance(
-            EnumServiceType::Bo,
-            MovimentacaoItem::class
-        );
-        $bo->delete($item);
-        return $this->json($item);
-    }
-
-    #[RouteOptions(path: '/movimentacao/items/{id}', parameters: ['id'])]
-    public function getItem(int $id): JsonResponse
-    {
+        /** @var MovimentacaoItemBo $bo */
         $bo = $this->serviceLocator->getServiceInstance(
             EnumServiceType::Bo,
             MovimentacaoItem::class
         );
         $item = $bo->byId($id);
+        $bo->delete($item);
         return $this->json($item);
+    }
+
+    #[RouteOptions(path: '/movimentacao/items/{id}', parameters: ['id'])]
+    public function getItems(int $id): JsonResponse
+    {
+        /** @var Movimentacao $movimentacao */
+        $movimentacao = $this->getBo()->byId($id);
+        return $this->json($movimentacao);
     }
 }

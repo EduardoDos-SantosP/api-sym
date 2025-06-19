@@ -10,29 +10,25 @@ home_about:
     path: /home/about
     controller: 'App\Controller\HomeController::about'
     condition: 'service("authenticator").authenticate(request)'
+movimentacao_all:
+    path: /movimentacao/all
+    controller: 'App\Controller\MovimentacaoController::all'
+    condition: 'service("authenticator").authenticate(request)'
 movimentacao_upsertitem:
     path: '/movimentacao/{id}/items/save'
     controller: 'App\Controller\MovimentacaoController::upsertItem'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_deleteitem:
-    path: /movimentacao/delete/item
+    path: '/movimentacao/delete/{id}'
     controller: 'App\Controller\MovimentacaoController::deleteItem'
     condition: 'service("authenticator").authenticate(request)'
-movimentacao_getitem:
+movimentacao_getitems:
     path: '/movimentacao/items/{id}'
-    controller: 'App\Controller\MovimentacaoController::getItem'
-    condition: 'service("authenticator").authenticate(request)'
-movimentacao_del:
-    path: /movimentacao/del
-    controller: 'App\Controller\MovimentacaoController::del'
+    controller: 'App\Controller\MovimentacaoController::getItems'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_new:
     path: /movimentacao/new
     controller: 'App\Controller\MovimentacaoController::new'
-    condition: 'service("authenticator").authenticate(request)'
-movimentacao_all:
-    path: /movimentacao/all
-    controller: 'App\Controller\MovimentacaoController::all'
     condition: 'service("authenticator").authenticate(request)'
 movimentacao_byid:
     path: '/movimentacao/byid/{id}'

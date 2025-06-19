@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\PersistentCollection;
 use JsonSerializable;
 use ReflectionClass;
 use ReflectionMethod;
@@ -76,22 +76,44 @@ abstract class Model implements JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        return collect((new ReflectionClass($this))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->filter(fn(ReflectionMethod $m) => $this->isGetter($m->name))
-            ->mapWithKeys(
-                fn(ReflectionMethod $m) => $m->getNumberOfRequiredParameters()
-                    ? [0 => null]
-                    : [
-                        b($m->name)->trimPrefix('get')->camel()->toString() =>
-                            (
-                            is_a($v = $m->invoke($this), PersistentCollection::class)
-                                ? $v->map(fn($i) => ['id' => $i->getId()])->getValues()
-                                : $v
-                            )
-                    ]
-            )
-            ->filter()
-            ->all();
+        return $this->serializeRecursive();
+    }
+
+    private function serializeRecursive(array &$visited = []): array
+    {
+        $result = [];
+        $refClass = new ReflectionClass($this);
+
+        $objectId = spl_object_id($this);
+        if (isset($visited[$objectId])) {
+            // Retorna somente o ID para evitar referência circular
+            return ['id' => $this->getId()];
+        }
+
+        $visited[$objectId] = true;
+
+        foreach ($refClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if (!$this->isGetter($method->name)) continue;
+            if ($method->getNumberOfRequiredParameters() > 0) continue;
+
+            $propName = b($method->name)->trimPrefix('get')->camel()->toString();
+            $value = $method->invoke($this);
+
+            if ($value instanceof Collection) {
+                $result[$propName] = $value
+                    ->map(fn($item) => $item instanceof self
+                        ? $item->serializeRecursive($visited)
+                        : $item
+                    )
+                    ->getValues();
+            } elseif ($value instanceof self) {
+                $result[$propName] = $value->serializeRecursive($visited);
+            } else {
+                $result[$propName] = $value;
+            }
+        }
+
+        return $result;
     }
 
     private function isGetter(string $methodName): bool
