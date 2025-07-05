@@ -115,7 +115,7 @@ class AppController extends Controller
 					
 					...collect([NotAuthenticate::class, DevRoute::class])
 						->some(fn(string $class) => MetaHelper::getAttribute($m, $class))
-						? [] : ['condition' => 'service("authenticator").authenticate(request)']
+						? [] : ['condition' => 'service("authenticator").authenticate(request, params)']
 				];
 			})->all();
 	}
