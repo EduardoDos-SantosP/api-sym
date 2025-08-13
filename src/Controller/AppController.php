@@ -113,9 +113,9 @@ class AppController extends Controller
 						->mapWithKeys(fn($p) => [$p => $routeOptions?->$p])
 						->filter()->all(),
 					
-					...collect([NotAuthenticate::class, DevRoute::class])
-						->some(fn(string $class) => MetaHelper::getAttribute($m, $class))
-						? [] : ['condition' => 'service("authenticator").authenticate(request, params)']
+					// ...collect([NotAuthenticate::class, DevRoute::class])
+					// 	->some(fn(string $class) => MetaHelper::getAttribute($m, $class))
+					// 	? [] : ['condition' => 'service("authenticator").authenticate(request, params)']
 				];
 			})->all();
 	}

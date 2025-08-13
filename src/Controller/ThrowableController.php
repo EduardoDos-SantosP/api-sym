@@ -31,18 +31,19 @@ class ThrowableController extends Controller
 				return $this->redirect($newRoute);
 		}
 		
-		if ($request->headers->get('sec-fetch-mode') !== 'navigate')
-            /*return new Response(
-                (new SerializerErrorRenderer(
-                    new Serializer(),
-                    'application/json'
-                ))->render($e)->getAsString()
-            );*/
-			return $this->json([
-                'name' => get_class($e),
-                'error' => $this->uncapsuleObj($e)
-            ]);
+		if ($request->headers->get('sec-fetch-mode') == 'navigate')
+			return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
+		/*return new Response(
+			(new SerializerErrorRenderer(
+				new Serializer(),
+				'application/json'
+			))->render($e)->getAsString()
+		);*/
 		
-		return new Response((new HtmlErrorRenderer())->render($e)->getAsString());
+
+		return $this->json([
+			'name' => get_class($e),
+			'error' => $this->uncapsuleObj($e)
+		]);
 	}
 }
